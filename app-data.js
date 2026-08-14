@@ -24,7 +24,7 @@
 
   async function addLead(data) {
     const result = await request('/api/leads', { method: 'POST', body: JSON.stringify(data) });
-    return result.lead;
+    return { ...result.lead, emailStatus: result.emailStatus || result.lead?.emailStatus, emailMessage: result.emailMessage || '' };
   }
 
   async function getLead(id) {

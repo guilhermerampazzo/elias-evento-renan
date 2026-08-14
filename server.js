@@ -3,6 +3,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { URL } = require('node:url');
 const db = require('./database');
+const { sendLeadReceipt } = require('./mailer');
 
 const ROOT = __dirname;
 const PORT = Number(process.env.PORT || 3000);
@@ -191,16 +192,51 @@ function publicLead(lead) {
   };
 }
 
+function digitsOnly(value) {
+  return String(value || '').replace(/\D/g, '');
+}
+
+function formatPhone(value) {
+  const digits = digitsOnly(value).slice(0, 11);
+  if (digits.length <= 2) return digits;
+  if (digits.length <= 10) return `(${digits.slice(0, 2)}) ${digits.slice(2, 6)}-${digits.slice(6)}`;
+  return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7)}`;
+}
+
+function formatCnpj(value) {
+  const digits = digitsOnly(value).slice(0, 14);
+  if (digits.length <= 2) return digits;
+  if (digits.length <= 5) return `${digits.slice(0, 2)}.${digits.slice(2)}`;
+  if (digits.length <= 8) return `${digits.slice(0, 2)}.${digits.slice(2, 5)}.${digits.slice(5)}`;
+  if (digits.length <= 12) return `${digits.slice(0, 2)}.${digits.slice(2, 5)}.${digits.slice(5, 8)}/${digits.slice(8)}`;
+  return `${digits.slice(0, 2)}.${digits.slice(2, 5)}.${digits.slice(5, 8)}/${digits.slice(8, 12)}-${digits.slice(12)}`;
+}
+
+function isValidCnpj(value) {
+  const digits = digitsOnly(value);
+  if (digits.length !== 14 || /^([0-9])\1{13}$/.test(digits)) return false;
+  const calculateDigit = (length) => {
+    const weights = length === 12 ? [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2] : [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
+    const sum = digits.slice(0, length).split('').reduce((total, digit, index) => total + Number(digit) * weights[index], 0);
+    const remainder = sum % 11;
+    return remainder < 2 ? 0 : 11 - remainder;
+  };
+  return calculateDigit(12) === Number(digits[12]) && calculateDigit(13) === Number(digits[13]);
+}
+
 function leadInput(body) {
+  const phoneDigits = digitsOnly(body.phone);
+  const cnpjDigits = digitsOnly(body.cnpj);
   const data = {
     name: String(body.name || '').trim(),
     email: String(body.email || '').trim().toLowerCase(),
     company: String(body.company || '').trim(),
-    phone: String(body.phone || '').trim(),
+    phone: formatPhone(phoneDigits),
+    cnpj: formatCnpj(cnpjDigits),
     consent: Boolean(body.consent)
   };
-  if (!data.name || !data.email || !data.company || !data.phone || !data.consent) {
-    const error = new Error('Preencha todos os campos obrigatórios e aceite receber informações sobre o evento.');
+  if (!data.name || !data.email || !data.company || phoneDigits.length < 10 || phoneDigits.length > 11 || !isValidCnpj(cnpjDigits) || !data.consent) {
+    const error = new Error('Preencha os campos obrigatórios com dados válidos e aceite receber informações sobre o evento.');
     error.code = 'INVALID_LEAD';
     throw error;
   }
@@ -241,7 +277,19 @@ async function handleApi(request, response, pathname, requestUrl) {
     try { body = await readBody(request); } catch (error) { return sendJson(response, error.statusCode || 400, { error: error.message }); }
     try {
       const lead = await db.createLead(leadInput(body));
-      return sendJson(response, 201, { lead });
+      try {
+        await sendLeadReceipt(lead);
+        await db.updateLeadEmailStatus(lead.id, 'sent');
+        return sendJson(response, 201, { lead: { ...lead, emailStatus: 'sent' }, emailStatus: 'sent' });
+      } catch (emailError) {
+        console.error(`Lead receipt email failed for ${lead.id}:`, emailError.message);
+        await db.updateLeadEmailStatus(lead.id, 'failed', emailError.message);
+        return sendJson(response, 201, {
+          lead: { ...lead, emailStatus: 'failed' },
+          emailStatus: 'failed',
+          emailMessage: 'Inscrição confirmada, mas não foi possível enviar o comprovante por e-mail.'
+        });
+      }
     } catch (error) {
       if (error.code === 'SLOTS_FULL') return sendJson(response, 409, { error: error.message });
       if (error.code === 'INVALID_LEAD') return sendJson(response, 400, { error: error.message });

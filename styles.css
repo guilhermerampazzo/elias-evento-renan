@@ -166,8 +166,9 @@ h1,h2,h3,p{margin-top:0}
 .form-eyebrow{color:#7d6233;margin-bottom:8px}
 .form-area h3,.success h3{font:600 32px Manrope;letter-spacing:-.05em;margin:0 0 30px}
 .form-area label{display:block;font-size:11px;font-weight:700;color:var(--ink);margin-bottom:22px}
-.form-area input:not([type=checkbox]){display:block;width:100%;border:0;border-bottom:1px solid #ad915d;background:transparent;outline:0;padding:12px 0 10px;margin-top:5px;font:15px 'DM Sans';color:var(--ink)}
+.form-area input:not([type=checkbox]){display:block;width:100%;border:0;border-bottom:1px solid #ad915d;background:transparent;outline:0;padding:12px 0 10px;margin-top:5px;font:16px 'DM Sans';color:var(--ink)}
 .form-area input:not([type=checkbox]):focus{border-color:var(--ink)}
+.form-area button[disabled]{opacity:.65;cursor:wait}
 .form-area input::placeholder{color:#817960}
 .check{display:flex!important;align-items:flex-start;gap:8px;font-weight:400!important;line-height:1.4;color:#5f584b!important}
 .check input{margin-top:2px;accent-color:var(--ink)}

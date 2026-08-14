@@ -32,7 +32,7 @@
     const status = $('#status-filter').value;
     const leads = await app.getLeads();
     return leads.filter((lead) => {
-      const matchesTerm = !term || [lead.name, lead.email, lead.company, lead.phone, lead.voucherCode, lead.backupCode].some((field) => String(field || '').toLowerCase().includes(term));
+      const matchesTerm = !term || [lead.name, lead.email, lead.company, lead.phone, lead.cnpj, lead.voucherCode, lead.backupCode].some((field) => String(field || '').toLowerCase().includes(term));
       return matchesTerm && (status === 'todos' || lead.status === status);
     });
   }
@@ -45,16 +45,29 @@
       const actions = [actionButton('open', 'Abrir ficha', lead, icons.open, { className: 'open-lead', text: 'Abrir' }), actionButton('email', 'Enviar e-mail', lead, icons.email), phone ? actionButton('phone', 'Ligar', lead, icons.phone) : '', actionButton('whatsapp', 'Abrir WhatsApp', lead, icons.whatsapp), lead.status !== 'validado' ? actionButton('validate', 'Marcar presença', lead, icons.validate) : '', actionButton('delete', 'Excluir lead', lead, icons.delete)].join('');
       return `<tr><td data-label="Participante"><div class="participant-cell"><span class="person-avatar" aria-hidden="true">${escapeHtml(participantInitials)}</span><div><strong>${escapeHtml(lead.name)}</strong><span>${escapeHtml(lead.email)}</span></div></div></td><td data-label="Empresa">${escapeHtml(lead.company || 'Não informado')}</td><td data-label="Contato"><div class="contact-cell"><strong>${escapeHtml(lead.phone || 'Não informado')}</strong><span>inscrito em ${escapeHtml(dateLabel(lead.createdAt))}</span></div></td><td data-label="Voucher / backup"><div class="voucher-cell"><strong>${escapeHtml(lead.voucherCode)}</strong><span>${escapeHtml(lead.backupCode)}</span></div></td><td data-label="Status"><span class="status-chip ${lead.status === 'validado' ? 'is-validated' : ''}">${statusLabel(lead)}</span></td><td data-label="Ações"><div class="table-actions">${actions}</div></td></tr>`;
     }).join('');
+    leadsBody.querySelectorAll('tr').forEach((row, index) => {
+      const cnpj = leads[index]?.cnpj;
+      const contact = row.querySelector('.contact-cell');
+      if (cnpj && contact) contact.insertAdjacentHTML('beforeend', `<span>CNPJ ${escapeHtml(cnpj)}</span>`);
+    });
     emptyState.hidden = leads.length !== 0;
+  }
+
+  function ensureCnpjDetail() {
+    if ($('#drawer-cnpj')) return;
+    const dateRow = $('#drawer-date')?.parentElement;
+    if (dateRow) dateRow.insertAdjacentHTML('beforebegin', '<div><dt>CNPJ</dt><dd id="drawer-cnpj">—</dd></div>');
   }
 
   function openDrawer(lead) {
     activeLead = lead;
+    ensureCnpjDetail();
     $('#drawer-title').textContent = lead.name;
     $('#drawer-name').textContent = lead.name;
     $('#drawer-email-value').textContent = lead.email;
     $('#drawer-company').textContent = lead.company || 'Não informado';
     $('#drawer-phone').textContent = lead.phone || 'Não informado';
+    $('#drawer-cnpj').textContent = lead.cnpj || 'Não informado';
     $('#drawer-date').textContent = dateLabel(lead.createdAt);
     $('#drawer-backup').textContent = lead.backupCode;
     $('#drawer-voucher').textContent = lead.voucherCode;
@@ -96,8 +109,8 @@
     event.preventDefault();
     const rows = await app.getLeads();
     if (!rows.length) { window.alert('Ainda não há leads para exportar.'); return; }
-    const headers = ['Nome', 'E-mail', 'Empresa', 'Telefone', 'Data da inscrição', 'Status', 'Voucher', 'Código backup', 'Presença validada em'];
-    const body = rows.map((lead) => [lead.name, lead.email, lead.company, lead.phone, dateLabel(lead.createdAt), statusLabel(lead), lead.voucherCode, lead.backupCode, lead.validatedAt ? dateLabel(lead.validatedAt) : '—']);
+    const headers = ['Nome', 'E-mail', 'Empresa', 'CNPJ', 'Telefone', 'Data da inscrição', 'Status', 'Voucher', 'Código backup', 'Presença validada em'];
+    const body = rows.map((lead) => [lead.name, lead.email, lead.company, lead.cnpj, lead.phone, dateLabel(lead.createdAt), statusLabel(lead), lead.voucherCode, lead.backupCode, lead.validatedAt ? dateLabel(lead.validatedAt) : '—']);
     const table = `<table><thead><tr>${headers.map((header) => `<th>${escapeHtml(header)}</th>`).join('')}</tr></thead><tbody>${body.map((row) => `<tr>${row.map((cell) => `<td>${escapeHtml(cell)}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
     const blob = new Blob([`\ufeff<!doctype html><html><head><meta charset="UTF-8"></head><body>${table}</body></html>`], { type: 'application/vnd.ms-excel;charset=utf-8' });
     const url = URL.createObjectURL(blob);

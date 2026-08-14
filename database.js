@@ -42,13 +42,17 @@ function rowToLead(row) {
     email: row.email,
     company: row.company,
     phone: row.phone,
+    cnpj: row.cnpj,
     consent: row.consent,
     status: row.status,
     validatedAt: row.validated_at,
     validatedBy: row.validated_by,
     voucherCode: row.voucher_code,
     backupCode: row.backup_code,
-    qrPayload: row.qr_payload
+    qrPayload: row.qr_payload,
+    emailStatus: row.email_status || 'pending',
+    emailSentAt: row.email_sent_at,
+    emailError: row.email_error
   };
 }
 
@@ -87,13 +91,17 @@ async function initDatabase() {
       email TEXT NOT NULL,
       company TEXT NOT NULL,
       phone TEXT NOT NULL,
+      cnpj TEXT NOT NULL,
       consent BOOLEAN NOT NULL DEFAULT FALSE,
       status TEXT NOT NULL DEFAULT 'confirmado' CHECK (status IN ('confirmado', 'validado')),
       validated_at TIMESTAMPTZ,
       validated_by TEXT,
       voucher_code TEXT NOT NULL UNIQUE,
       backup_code TEXT NOT NULL UNIQUE,
-      qr_payload TEXT NOT NULL UNIQUE
+      qr_payload TEXT NOT NULL UNIQUE,
+      email_status TEXT NOT NULL DEFAULT 'pending',
+      email_sent_at TIMESTAMPTZ,
+      email_error TEXT
     );
 
     CREATE TABLE IF NOT EXISTS sessions (
@@ -105,6 +113,11 @@ async function initDatabase() {
 
     CREATE INDEX IF NOT EXISTS leads_created_at_idx ON leads (created_at DESC);
     CREATE INDEX IF NOT EXISTS sessions_expires_at_idx ON sessions (expires_at);
+
+    ALTER TABLE leads ADD COLUMN IF NOT EXISTS cnpj TEXT NOT NULL DEFAULT '';
+    ALTER TABLE leads ADD COLUMN IF NOT EXISTS email_status TEXT NOT NULL DEFAULT 'pending';
+    ALTER TABLE leads ADD COLUMN IF NOT EXISTS email_sent_at TIMESTAMPTZ;
+    ALTER TABLE leads ADD COLUMN IF NOT EXISTS email_error TEXT;
   `);
 
   await pool.query(`
@@ -218,10 +231,10 @@ async function createLead(data) {
     const backupCode = `W26-${randomCode(4)}-${randomCode(4)}`;
     const qrPayload = `WOWTAX|${id}|${voucherCode}|${backupCode}`;
     const result = await client.query(
-      `INSERT INTO leads (id, name, email, company, phone, consent, voucher_code, backup_code, qr_payload)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+      `INSERT INTO leads (id, name, email, company, phone, cnpj, consent, voucher_code, backup_code, qr_payload)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
        RETURNING *`,
-      [id, String(data.name || '').trim(), String(data.email || '').trim().toLowerCase(), String(data.company || '').trim(), String(data.phone || '').trim(), Boolean(data.consent), voucherCode, backupCode, qrPayload]
+      [id, String(data.name || '').trim(), String(data.email || '').trim().toLowerCase(), String(data.company || '').trim(), String(data.phone || '').trim(), String(data.cnpj || '').trim(), Boolean(data.consent), voucherCode, backupCode, qrPayload]
     );
     await client.query('COMMIT');
     return rowToLead(result.rows[0]);
@@ -231,6 +244,19 @@ async function createLead(data) {
   } finally {
     client.release();
   }
+}
+
+async function updateLeadEmailStatus(id, status, errorMessage = null) {
+  const result = await pool.query(
+    `UPDATE leads
+     SET email_status = $2,
+         email_sent_at = CASE WHEN $2 = 'sent' THEN NOW() ELSE email_sent_at END,
+         email_error = $3
+     WHERE id = $1
+     RETURNING *`,
+    [id, status, errorMessage ? String(errorMessage).slice(0, 500) : null]
+  );
+  return rowToLead(result.rows[0]);
 }
 
 async function updateLead(id, changes) {
@@ -320,5 +346,6 @@ module.exports = {
   listLeads,
   pool,
   updateLead,
+  updateLeadEmailStatus,
   verifyPassword
 };

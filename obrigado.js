@@ -1,6 +1,7 @@
  (async () => {
   const app = window.WowTaxApp;
   const params = new URLSearchParams(window.location.search);
+  const emailStatus = params.get('email');
   const lead = app && await app.getLead(params.get('id'));
   const state = document.querySelector('#voucher-state');
 
@@ -16,6 +17,9 @@
   document.querySelector('#card-company').textContent = lead.company || 'Não informado';
   document.querySelector('#backup-code').textContent = lead.backupCode;
   document.querySelector('#voucher-code').textContent = lead.voucherCode;
+  state.textContent = emailStatus === 'failed'
+    ? 'Inscrição confirmada, mas não foi possível enviar o comprovante por e-mail. Salve este voucher ou use o código backup.'
+    : 'Comprovante enviado para o e-mail informado. Guarde este voucher; o código backup pode ser usado caso o QR Code não funcione.';
 
   const qrCanvas = document.querySelector('#qr-canvas');
   if (window.QRCode) {

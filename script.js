@@ -18,6 +18,60 @@ function updateLandingCopy() {
   }
 }
 
+function digitsOnly(value) {
+  return String(value || '').replace(/\D/g, '');
+}
+
+function formatPhoneInput(value) {
+  const digits = digitsOnly(value).slice(0, 11);
+  if (digits.length <= 2) return digits;
+  if (digits.length <= 10) return `(${digits.slice(0, 2)}) ${digits.slice(2, 6)}-${digits.slice(6)}`;
+  return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)}-${digits.slice(7)}`;
+}
+
+function formatCnpjInput(value) {
+  const digits = digitsOnly(value).slice(0, 14);
+  if (digits.length <= 2) return digits;
+  if (digits.length <= 5) return `${digits.slice(0, 2)}.${digits.slice(2)}`;
+  if (digits.length <= 8) return `${digits.slice(0, 2)}.${digits.slice(2, 5)}.${digits.slice(5)}`;
+  if (digits.length <= 12) return `${digits.slice(0, 2)}.${digits.slice(2, 5)}.${digits.slice(5, 8)}/${digits.slice(8)}`;
+  return `${digits.slice(0, 2)}.${digits.slice(2, 5)}.${digits.slice(5, 8)}/${digits.slice(8, 12)}-${digits.slice(12)}`;
+}
+
+function isValidCnpj(value) {
+  const digits = digitsOnly(value);
+  if (digits.length !== 14 || /^([0-9])\1{13}$/.test(digits)) return false;
+  const calculateDigit = (length) => {
+    const weights = length === 12 ? [5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2] : [6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2];
+    const sum = digits.slice(0, length).split('').reduce((total, digit, index) => total + Number(digit) * weights[index], 0);
+    const remainder = sum % 11;
+    return remainder < 2 ? 0 : 11 - remainder;
+  };
+  return calculateDigit(12) === Number(digits[12]) && calculateDigit(13) === Number(digits[13]);
+}
+
+function setupLeadForm() {
+  if (!form) return;
+  const companyInput = form.querySelector('input[name="company"]');
+  const phoneInput = form.querySelector('input[name="phone"]');
+  if (!companyInput || !phoneInput) return;
+
+  if (!form.querySelector('input[name="cnpj"]')) {
+    companyInput.closest('label').insertAdjacentHTML('afterend', '<label>CNPJ<input name="cnpj" type="text" inputmode="numeric" autocomplete="organization" maxlength="18" required placeholder="00.000.000/0000-00" /></label>');
+  }
+  const cnpjInput = form.querySelector('input[name="cnpj"]');
+  phoneInput.setAttribute('maxlength', '15');
+  phoneInput.setAttribute('inputmode', 'tel');
+  phoneInput.addEventListener('input', () => { phoneInput.value = formatPhoneInput(phoneInput.value); });
+  cnpjInput.addEventListener('input', () => {
+    cnpjInput.value = formatCnpjInput(cnpjInput.value);
+    cnpjInput.setCustomValidity(isValidCnpj(cnpjInput.value) ? '' : 'Informe um CNPJ válido.');
+  });
+  cnpjInput.addEventListener('blur', () => {
+    cnpjInput.setCustomValidity(isValidCnpj(cnpjInput.value) ? '' : 'Informe um CNPJ válido.');
+  });
+}
+
 function setupCountdown() {
   const heroCta = document.querySelector('.hero-copy .button');
   if (!heroCta || document.querySelector('#event-countdown')) return;
@@ -73,6 +127,7 @@ function setupSectionCtas() {
 }
 
 updateLandingCopy();
+setupLeadForm();
 setupCountdown();
 setupSectionCtas();
 
@@ -81,7 +136,11 @@ if (form && app) {
     event.preventDefault();
     if (!form.reportValidity()) return;
     const submitButton = form.querySelector('button[type="submit"]');
-    if (submitButton) submitButton.disabled = true;
+    const submitLabel = submitButton?.textContent || 'Confirmar inscrição';
+    if (submitButton) {
+      submitButton.disabled = true;
+      submitButton.textContent = 'Enviando...';
+    }
     const formData = new FormData(form);
     try {
       if (await app.availableSlots() <= 0) {
@@ -93,13 +152,18 @@ if (form && app) {
         email: formData.get('email'),
         company: formData.get('company'),
         phone: formData.get('phone'),
+        cnpj: formData.get('cnpj'),
         consent: formData.get('consent') === 'on'
       });
-      window.location.href = `/obrigado?id=${encodeURIComponent(lead.id)}`;
+      const emailState = lead.emailStatus === 'sent' ? '' : '&email=failed';
+      window.location.href = `/obrigado?id=${encodeURIComponent(lead.id)}${emailState}`;
     } catch (error) {
       window.alert(error.message || 'Não foi possível concluir sua inscrição. Tente novamente.');
     } finally {
-      if (submitButton) submitButton.disabled = false;
+      if (submitButton) {
+        submitButton.disabled = false;
+        submitButton.textContent = submitLabel;
+      }
     }
   });
 }
