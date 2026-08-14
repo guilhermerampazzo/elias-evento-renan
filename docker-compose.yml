@@ -1,0 +1,8 @@
+services:
+  wow-tax-event:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "10333:80"
+    restart: unless-stopped

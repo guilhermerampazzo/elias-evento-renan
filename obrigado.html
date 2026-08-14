@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Seu voucher de inscrição para o evento da WOW Tax." />
+  <title>Inscrição confirmada — WOW Tax</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="voucher.css" />
+</head>
+<body class="voucher-body">
+  <header class="voucher-header">
+    <a href="index.html" aria-label="Voltar para a página do evento"><img src="arquivos/wowtaxmoment_logo.svg" alt="WOW Tax" /></a>
+    <span>03 SET · CENFORPE</span>
+  </header>
+
+  <main class="voucher-main">
+    <section class="voucher-intro">
+      <p class="voucher-kicker">INSCRIÇÃO CONFIRMADA</p>
+      <h1>Até lá,<br><em id="lead-name">convidado.</em></h1>
+      <p class="voucher-lead">Sua presença está reservada. Apresente o QR Code na entrada do evento — no celular ou impresso.</p>
+      <div class="event-facts">
+        <div><span>DATA</span><strong>03 de setembro de 2026</strong></div>
+        <div><span>HORÁRIO</span><strong>A partir das 9h</strong></div>
+        <div><span>LOCAL</span><strong>CENFORPE · São Bernardo do Campo</strong></div>
+      </div>
+      <a class="back-link" href="index.html">← Voltar para a página do evento</a>
+    </section>
+
+    <section class="voucher-card" id="voucher-card" aria-labelledby="voucher-title">
+      <div class="voucher-card-head">
+        <div><p class="voucher-kicker">ACESSO PRESENCIAL</p><h2 id="voucher-title">Seu voucher</h2></div>
+        <span class="voucher-status">CONFIRMADO</span>
+      </div>
+      <div class="ticket-perforation" aria-hidden="true"><i></i><i></i></div>
+      <div class="qr-area"><canvas id="qr-canvas" width="280" height="280" aria-label="QR Code do voucher"></canvas><p>Escaneie este código na recepção</p></div>
+      <div class="voucher-details"><div><span>INSCRITO</span><strong id="card-name">—</strong></div><div><span>EMPRESA</span><strong id="card-company">—</strong></div><div class="backup-block"><span>CÓDIGO BACKUP</span><strong id="backup-code">—</strong><button id="copy-backup" type="button">Copiar</button></div></div>
+      <div class="ticket-code"><span>VOUCHER</span><strong id="voucher-code">—</strong></div>
+      <div class="voucher-actions"><button class="action-button action-primary" id="save-image" type="button">Salvar imagem</button><button class="action-button" id="save-pdf" type="button">Salvar PDF</button><button class="action-button" id="share-whatsapp" type="button">Enviar no WhatsApp</button></div>
+      <p class="voucher-note" id="voucher-state">Guarde este voucher. O código backup pode ser usado caso o QR Code não funcione.</p>
+    </section>
+  </main>
+
+  <script src="app-data.js"></script>
+  <script src="vendor/qrcode-v2.js"></script>
+  <script src="obrigado.js"></script>
+</body>
+</html>
