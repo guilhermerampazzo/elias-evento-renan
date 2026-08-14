@@ -44,23 +44,29 @@ updateLandingCopy();
 setupCountdown();
 
 if (form && app) {
-  form.addEventListener('submit', (event) => {
+  form.addEventListener('submit', async (event) => {
     event.preventDefault();
     if (!form.reportValidity()) return;
-    if (app.availableSlots() <= 0) {
-      window.alert('As vagas já foram preenchidas.');
-      return;
-    }
-
+    const submitButton = form.querySelector('button[type="submit"]');
+    if (submitButton) submitButton.disabled = true;
     const formData = new FormData(form);
-    const lead = app.addLead({
-      name: formData.get('name'),
-      email: formData.get('email'),
-      company: formData.get('company'),
-      phone: formData.get('phone'),
-      consent: formData.get('consent') === 'on'
-    });
-
-    window.location.href = `obrigado.html?id=${encodeURIComponent(lead.id)}`;
+    try {
+      if (await app.availableSlots() <= 0) {
+        window.alert('As vagas já foram preenchidas.');
+        return;
+      }
+      const lead = await app.addLead({
+        name: formData.get('name'),
+        email: formData.get('email'),
+        company: formData.get('company'),
+        phone: formData.get('phone'),
+        consent: formData.get('consent') === 'on'
+      });
+      window.location.href = `/obrigado?id=${encodeURIComponent(lead.id)}`;
+    } catch (error) {
+      window.alert(error.message || 'Não foi possível concluir sua inscrição. Tente novamente.');
+    } finally {
+      if (submitButton) submitButton.disabled = false;
+    }
   });
 }

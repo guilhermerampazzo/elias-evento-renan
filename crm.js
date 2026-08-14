@@ -1,4 +1,4 @@
-(() => {
+ (async () => {
   const crm = window.WowTaxCRM;
   if (!crm) return;
 
@@ -6,9 +6,9 @@
   const body = document.querySelector('#overview-leads-body');
   const empty = document.querySelector('#overview-empty');
   const checkins = document.querySelector('#overview-checkins');
-  const leads = app.getLeads();
+  const leads = await app.getLeads();
 
-  renderKpis();
+  await renderKpis();
   checkins.textContent = leads.filter((lead) => lead.status === 'validado').length.toLocaleString('pt-BR');
 
   if (!leads.length) {

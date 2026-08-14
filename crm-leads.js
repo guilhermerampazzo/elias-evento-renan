@@ -27,17 +27,18 @@
     return `<button class="${classes}" data-action="${action}" data-id="${escapeHtml(lead.id)}" type="button" title="${label}" aria-label="${label}">${text}${icon}</button>`;
   }
 
-  function getFilteredLeads() {
+  async function getFilteredLeads() {
     const term = $('#lead-search').value.trim().toLowerCase();
     const status = $('#status-filter').value;
-    return app.getLeads().filter((lead) => {
+    const leads = await app.getLeads();
+    return leads.filter((lead) => {
       const matchesTerm = !term || [lead.name, lead.email, lead.company, lead.phone, lead.voucherCode, lead.backupCode].some((field) => String(field || '').toLowerCase().includes(term));
       return matchesTerm && (status === 'todos' || lead.status === status);
     });
   }
 
-  function renderLeads() {
-    const leads = getFilteredLeads();
+  async function renderLeads() {
+    const leads = await getFilteredLeads();
     leadsBody.innerHTML = leads.map((lead) => {
       const phone = app.phoneDigits(lead.phone);
       const participantInitials = initials(lead.name);
@@ -75,25 +76,25 @@
     activeLead = null;
   }
 
-  function markValidated(lead) {
-    const updated = app.updateLead(lead.id, { status: 'validado', validatedAt: new Date().toISOString(), validatedBy: 'CRM' });
-    renderKpis();
-    renderLeads();
+  async function markValidated(lead) {
+    const updated = await app.updateLead(lead.id, { status: 'validado', validatedAt: new Date().toISOString(), validatedBy: 'CRM' });
+    await renderKpis();
+    await renderLeads();
     if (activeLead?.id === lead.id) openDrawer(updated);
   }
 
-  function deleteLead(lead) {
+  async function deleteLead(lead) {
     const confirmed = window.confirm(`Excluir a inscrição de ${lead.name}? Esta ação remove o voucher e libera a vaga.`);
     if (!confirmed) return;
-    app.removeLead(lead.id);
+    await app.removeLead(lead.id);
     if (activeLead?.id === lead.id) closeDrawer();
-    renderKpis();
-    renderLeads();
+    await renderKpis();
+    await renderLeads();
   }
 
-  function exportExcel(event) {
+  async function exportExcel(event) {
     event.preventDefault();
-    const rows = app.getLeads();
+    const rows = await app.getLeads();
     if (!rows.length) { window.alert('Ainda não há leads para exportar.'); return; }
     const headers = ['Nome', 'E-mail', 'Empresa', 'Telefone', 'Data da inscrição', 'Status', 'Voucher', 'Código backup', 'Presença validada em'];
     const body = rows.map((lead) => [lead.name, lead.email, lead.company, lead.phone, dateLabel(lead.createdAt), statusLabel(lead), lead.voucherCode, lead.backupCode, lead.validatedAt ? dateLabel(lead.validatedAt) : '—']);
@@ -106,15 +107,15 @@
   $('#lead-search').addEventListener('input', renderLeads);
   $('#status-filter').addEventListener('change', renderLeads);
   $('#export-excel').addEventListener('click', exportExcel);
-  leadsBody.addEventListener('click', (event) => {
+  leadsBody.addEventListener('click', async (event) => {
     const button = event.target.closest('[data-action]'); if (!button) return;
-    const lead = app.getLead(button.dataset.id); if (!lead) return;
+    const lead = await app.getLead(button.dataset.id); if (!lead) return;
     if (button.dataset.action === 'open') openDrawer(lead);
     if (button.dataset.action === 'email') openMail(lead);
     if (button.dataset.action === 'phone') openPhone(lead);
     if (button.dataset.action === 'whatsapp') openWhatsApp(lead);
-    if (button.dataset.action === 'validate') markValidated(lead);
-    if (button.dataset.action === 'delete') deleteLead(lead);
+    if (button.dataset.action === 'validate') await markValidated(lead);
+    if (button.dataset.action === 'delete') await deleteLead(lead);
   });
   $('#close-drawer').addEventListener('click', closeDrawer);
   $('#drawer-backdrop').addEventListener('click', closeDrawer);

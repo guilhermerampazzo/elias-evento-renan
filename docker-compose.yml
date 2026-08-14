@@ -4,5 +4,41 @@ services:
       context: .
       dockerfile: Dockerfile
     ports:
-      - "10333:80"
+      - "10333:3000"
+    environment:
+      NODE_ENV: ${NODE_ENV:-development}
+      PORT: 3000
+      ADMIN_EMAIL: ${ADMIN_EMAIL:?ADMIN_EMAIL must be set in .env}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-}
+      ADMIN_PASSWORD_HASH: ${ADMIN_PASSWORD_HASH:-}
+      SESSION_TTL_HOURS: ${SESSION_TTL_HOURS:-8}
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: ${DB_NAME:-wowtax}
+      DB_USER: ${DB_USER:-wowtax}
+      DB_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD must be set in .env}
+      DB_POOL_MAX: ${DB_POOL_MAX:-10}
+    depends_on:
+      db:
+        condition: service_healthy
     restart: unless-stopped
+
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${DB_NAME:-wowtax}
+      POSTGRES_USER: ${DB_USER:-wowtax}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD must be set in .env}
+    expose:
+      - "5432"
+    volumes:
+      - wow_tax_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-wowtax} -d ${DB_NAME:-wowtax}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    restart: unless-stopped
+
+volumes:
+  wow_tax_postgres_data:

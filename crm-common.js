@@ -28,27 +28,35 @@
     window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank', 'noopener');
   }
 
-  function renderKpis() {
-    const leads = app.getLeads();
-    const admins = app.getAdmins();
+  async function renderKpis() {
+    let stats;
+    try {
+      const response = await fetch('/api/stats', { credentials: 'same-origin' });
+      if (!response.ok) return;
+      stats = await response.json();
+    } catch (error) {
+      return;
+    }
+    const leads = stats.leads || [];
     const values = {
       'kpi-leads': leads.length.toLocaleString('pt-BR'),
-      'kpi-slots': app.availableSlots().toLocaleString('pt-BR'),
+      'kpi-slots': Number(stats.availableSlots || 0).toLocaleString('pt-BR'),
       'kpi-validated': leads.filter((lead) => lead.status === 'validado').length.toLocaleString('pt-BR'),
-      'kpi-admins': admins.length.toLocaleString('pt-BR')
+      'kpi-admins': Number(stats.adminsCount || 0).toLocaleString('pt-BR')
     };
     Object.entries(values).forEach(([id, value]) => {
       const element = document.getElementById(id);
       if (element) element.textContent = value;
     });
     const adminCount = document.getElementById('admin-count');
-    if (adminCount) adminCount.textContent = `${admins.length} ${admins.length === 1 ? 'usuário' : 'usuários'}`;
+    if (adminCount) adminCount.textContent = `${stats.adminsCount} ${stats.adminsCount === 1 ? 'usuário' : 'usuários'}`;
   }
 
   function initNavigation() {
-    const current = window.location.pathname.split('/').pop() || 'crm.html';
+    const current = window.location.pathname.replace(/\/+$/, '') || '/';
+    const pageAliases = { 'crm.html': '/crm', 'leads.html': '/leads', 'leitor.html': '/leitor', 'admins.html': '/administradores' };
     document.querySelectorAll('[data-nav]').forEach((link) => {
-      const isActive = link.dataset.nav === current;
+      const isActive = (pageAliases[link.dataset.nav] || link.dataset.nav) === current;
       link.classList.toggle('is-active', isActive);
       if (isActive) link.setAttribute('aria-current', 'page');
     });
@@ -66,12 +74,35 @@
       link.innerHTML = `${icons[link.dataset.nav] || ''}<span>${label}</span>`;
     });
     document.querySelectorAll('.sidebar-foot').forEach((foot) => {
-      foot.innerHTML = '<div class="team-profile"><span class="team-avatar">W</span><div><strong>Equipe WOW Tax</strong><small>Painel de operação</small></div></div><a class="site-link" href="index.html">Voltar ao site<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg></a>';
+      foot.innerHTML = '<div class="team-profile"><span class="team-avatar">W</span><div><strong>Equipe WOW Tax</strong><small>Painel de operação</small></div></div><div class="sidebar-links"><a class="site-link" href="/">Voltar ao site<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6"/></svg></a><button class="site-link logout-link" id="logout-button" type="button">Sair<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5H5v14h4M15 8l4 4-4 4M19 12H9"/></svg></button></div>';
     });
+  }
+
+  async function checkSession() {
+    try {
+      const response = await fetch('/api/auth/me', { credentials: 'same-origin' });
+      if (!response.ok) {
+        const next = `${window.location.pathname}${window.location.search}`;
+        window.location.replace(`/login?next=${encodeURIComponent(next)}`);
+        return;
+      }
+      const result = await response.json();
+      document.querySelectorAll('#logout-button').forEach((button) => {
+        button.addEventListener('click', async () => {
+          button.disabled = true;
+          await fetch('/api/auth/logout', { method: 'POST', credentials: 'same-origin' });
+          window.location.replace('/login');
+        });
+      });
+      window.WowTaxCRM.currentUser = result.user;
+    } catch (error) {
+      window.location.replace('/login');
+    }
   }
 
   window.WowTaxCRM = { app, dateLabel, decorateSidebar, escapeHtml, initNavigation, openMail, openPhone, openWhatsApp, renderKpis, statusLabel };
   decorateSidebar();
   initNavigation();
   renderKpis();
+  checkSession();
 })();

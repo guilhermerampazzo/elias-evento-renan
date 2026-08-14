@@ -66,19 +66,26 @@
     window.setTimeout(close, type === 'success' ? 5600 : 6500);
   }
 
-  function resolveCode(rawCode) {
+  async function resolveCode(rawCode) {
     const code = String(rawCode || '').trim();
     if (!code) return null;
-    if (code.startsWith('WOWTAX|')) {
-      const parts = code.split('|');
-      return app.getLead(parts[1]) || app.getLeads().find((lead) => lead.voucherCode === parts[2]);
+    try {
+      const response = await fetch('/api/checkins/resolve', {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code })
+      });
+      if (!response.ok) return null;
+      const result = await response.json();
+      return result.lead || null;
+    } catch (error) {
+      return null;
     }
-    const normalized = code.toUpperCase().replace(/\s/g, '');
-    return app.getLeads().find((lead) => [lead.voucherCode, lead.backupCode].some((value) => value.toUpperCase().replace(/\s/g, '') === normalized)) || null;
   }
 
-  function validateCode(rawCode) {
-    const lead = resolveCode(rawCode);
+  async function validateCode(rawCode) {
+    const lead = await resolveCode(rawCode);
     if (!lead) {
       setStatus('Código não encontrado nesta base de participantes.', 'error');
       showToast('Não foi possível escanear', 'O QR Code ou código informado não corresponde a uma inscrição.', 'error');
@@ -89,8 +96,8 @@
       showToast('Entrada já validada', `${lead.name} já fez check-in neste evento.`, 'warning');
       return false;
     }
-    app.updateLead(lead.id, { status: 'validado', validatedAt: new Date().toISOString(), validatedBy: 'Leitor QR' });
-    renderKpis();
+    await app.updateLead(lead.id, { status: 'validado', validatedAt: new Date().toISOString(), validatedBy: 'Leitor QR' });
+    await renderKpis();
     setStatus(`Entrada confirmada: ${lead.name}.`, 'success');
     showToast('Voucher aprovado', `${lead.name} está autorizado(a) a participar do evento.`, 'success');
     return true;
@@ -122,7 +129,7 @@
       const image = context.getImageData(0, 0, canvas.width, canvas.height);
       if (typeof window.jsQR === 'function') {
         const result = window.jsQR(image.data, image.width, image.height, { inversionAttempts: 'dontInvert' });
-        if (result?.data) { validateCode(result.data); stopReader(); scannerBusy = false; return; }
+        if (result?.data) { await validateCode(result.data); stopReader(); scannerBusy = false; return; }
       }
     } finally { scannerBusy = false; }
     animationFrame = requestAnimationFrame(scanFrame);
@@ -158,10 +165,10 @@
   setupReaderUi();
   $('#start-reader').addEventListener('click', startReader);
   $('#stop-reader').addEventListener('click', stopReader);
-  $('#manual-code-form').addEventListener('submit', (event) => {
+  $('#manual-code-form').addEventListener('submit', async (event) => {
     event.preventDefault();
     const code = new FormData(event.currentTarget).get('code');
-    validateCode(code);
+    await validateCode(code);
     event.currentTarget.reset();
   });
   window.addEventListener('beforeunload', stopReader);

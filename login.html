@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Acesso seguro ao painel de operações do evento WOW Tax." />
+  <title>Entrar — WOW Tax Event Operations</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/login.css?v=1" />
+</head>
+<body class="login-page">
+  <main class="login-shell">
+    <section class="login-brand-panel" aria-label="Identidade do evento">
+      <a class="login-logo" href="/" aria-label="WOW Tax — página do evento">
+        <img src="/arquivos/wowtaxmoment_logo.svg" alt="WOW Tax Consultoria Tributária" />
+      </a>
+      <div class="login-brand-copy">
+        <span>EVENT OPERATIONS</span>
+        <h1>Um painel para conduzir o evento com clareza.</h1>
+        <p>Leads, vouchers e check-in organizados em um único ambiente de operação.</p>
+      </div>
+      <div class="login-event-meta">
+        <span>EVENTO ATIVO</span>
+        <strong>Reforma Tributária</strong>
+        <small>03 SET 2026 · CENFORPE</small>
+      </div>
+    </section>
+
+    <section class="login-card-wrap">
+      <div class="login-card">
+        <div class="login-card-head">
+          <span class="login-eyebrow">ACESSO RESTRITO</span>
+          <h2>Entrar no painel</h2>
+          <p>Use seu acesso de administrador para continuar.</p>
+        </div>
+        <form id="login-form" class="login-form" novalidate>
+          <label>
+            E-mail
+            <input id="login-email" name="email" type="email" autocomplete="username" placeholder="voce@empresa.com.br" required />
+          </label>
+          <label>
+            Senha
+            <input id="login-password" name="password" type="password" autocomplete="current-password" placeholder="Digite sua senha" required />
+          </label>
+          <button class="login-submit" type="submit">
+            <span>Entrar no painel</span>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h13M13 6l6 6-6 6" /></svg>
+          </button>
+          <p class="login-error" id="login-error" role="alert" hidden></p>
+        </form>
+      </div>
+      <a class="back-to-event" href="/">← Voltar para a página do evento</a>
+    </section>
+  </main>
+  <script src="/login.js?v=1"></script>
+</body>
+</html>

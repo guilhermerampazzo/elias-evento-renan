@@ -1,7 +1,7 @@
-(() => {
+ (async () => {
   const app = window.WowTaxApp;
   const params = new URLSearchParams(window.location.search);
-  const lead = app && app.getLead(params.get('id'));
+  const lead = app && await app.getLead(params.get('id'));
   const state = document.querySelector('#voucher-state');
 
   if (!lead) {
