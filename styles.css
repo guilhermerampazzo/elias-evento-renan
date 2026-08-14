@@ -26,6 +26,20 @@ h1,h2,h3,p{margin-top:0}
 .hero-deck{font:500 23px 'Instrument Serif',Georgia,serif;color:var(--gold-pale);margin:28px 0 14px}
 .hero-intro{font-size:15px;line-height:1.7;color:#b9c7c7;max-width:385px;margin-bottom:31px}
 .button{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:15px 21px;border:0;font:700 11px 'DM Sans';letter-spacing:1px;text-transform:uppercase;text-decoration:none;cursor:pointer;transition:transform 160ms var(--ease-out),background 160ms ease,color 160ms ease}
+.hero-copy>.button{min-width:228px;min-height:58px;padding:19px 30px;font-size:12px;letter-spacing:1.2px}
+.section-cta{display:flex;flex-direction:column;align-items:flex-start;gap:10px;margin-top:38px}
+.section-cta .button{min-width:220px;min-height:56px;padding:18px 28px;font-size:12px;letter-spacing:1.15px}
+.section-cta .button-navy{width:auto}
+.cta-note,.form-free-note{display:block;font-size:10px;line-height:1.45;font-weight:800;letter-spacing:1.35px;text-transform:uppercase}
+.cta-note{color:var(--gold)}
+.hero-free-note{margin-top:12px;color:var(--gold-pale)}
+.editorial-copy .section-cta{margin-top:30px}
+.stage .cta-note,.wow-tax .cta-note,.hero .cta-note{color:var(--gold-pale)}
+.outcomes .section-cta{margin-top:42px}
+.outcomes .cta-note{color:var(--ink)}
+.location-cta{grid-column:1/-1;margin-top:0}
+.faq>.section-cta{grid-column:2}
+.form-free-note{margin-top:12px;color:#5f584b}
 .button-gold{background:var(--gold);color:var(--ink)}
 .button-gold:hover{background:var(--gold-pale)}
 .button-navy{background:var(--ink);color:white;width:100%}
@@ -250,6 +264,7 @@ h1,h2,h3,p{margin-top:0}
 .location-copy{font-size:19px}
 .location-data strong{font-size:16px}
 .faq{padding:20px 20px 80px;gap:35px}
+.faq>.section-cta{grid-column:auto}
 .registration{grid-template-columns:1fr}
 .registration-message{padding:78px 20px;min-height:430px}
 .form-area{padding:60px 20px}

@@ -40,8 +40,41 @@ function setupCountdown() {
   window.setInterval(update, 1000);
 }
 
+function sectionCtaMarkup(buttonClass = 'button-gold') {
+  return `<div class="section-cta"><a class="button ${buttonClass}" href="#inscricao">Quero participar</a><span class="cta-note">Evento gratuito · vagas limitadas</span></div>`;
+}
+
+function insertSectionCta(selector, buttonClass = 'button-gold') {
+  const target = document.querySelector(selector);
+  if (!target || target.nextElementSibling?.classList.contains('section-cta')) return;
+  target.insertAdjacentHTML('afterend', sectionCtaMarkup(buttonClass));
+}
+
+function setupSectionCtas() {
+  const heroCta = document.querySelector('.hero-copy .button');
+  if (heroCta && !heroCta.nextElementSibling?.classList.contains('cta-note')) {
+    heroCta.insertAdjacentHTML('afterend', '<span class="cta-note hero-free-note">Evento gratuito · vagas limitadas</span>');
+  }
+
+  insertSectionCta('.manifesto .manifesto-grid');
+  insertSectionCta('.editorial-copy > p:last-of-type');
+  insertSectionCta('.questions .question-list');
+  insertSectionCta('.stage .profiles');
+  insertSectionCta('.path .path-rows');
+  insertSectionCta('.outcomes .outcome-lines', 'button-navy');
+  insertSectionCta('.wow-tax .services');
+  insertSectionCta('.location .location-data');
+  insertSectionCta('.faq .faq-list');
+
+  const formButton = document.querySelector('#registration-form button[type="submit"]');
+  if (formButton && !formButton.nextElementSibling?.classList.contains('form-free-note')) {
+    formButton.insertAdjacentHTML('afterend', '<span class="form-free-note">Evento gratuito · vagas limitadas</span>');
+  }
+}
+
 updateLandingCopy();
 setupCountdown();
+setupSectionCtas();
 
 if (form && app) {
   form.addEventListener('submit', async (event) => {
