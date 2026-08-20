@@ -75,7 +75,7 @@ function setupLeadForm() {
 function setupCountdown() {
   const heroCta = document.querySelector('.hero-copy .button');
   if (!heroCta || document.querySelector('#event-countdown')) return;
-  heroCta.insertAdjacentHTML('afterend', '<div class="event-countdown" id="event-countdown" aria-live="polite"><div class="countdown-head"><span>CONTAGEM REGRESSIVA</span><strong>Evento gratuito</strong></div><div class="countdown-grid"><div class="countdown-unit"><strong id="countdown-days">--</strong><span>dias</span></div><div class="countdown-unit"><strong id="countdown-hours">--</strong><span>horas</span></div><div class="countdown-unit"><strong id="countdown-minutes">--</strong><span>minutos</span></div><div class="countdown-unit"><strong id="countdown-seconds">--</strong><span>segundos</span></div></div><p class="countdown-caption">até 03 de setembro de 2026 · CENFORPE</p></div>');
+  heroCta.insertAdjacentHTML('afterend', '<div class="event-countdown" id="event-countdown" aria-live="polite"><div class="countdown-head"><span>CONTAGEM REGRESSIVA</span><strong>Evento gratuito</strong></div><div class="countdown-grid"><div class="countdown-unit"><strong id="countdown-days">--</strong><span>dias</span></div><div class="countdown-unit"><strong id="countdown-hours">--</strong><span>horas</span></div><div class="countdown-unit"><strong id="countdown-minutes">--</strong><span>minutos</span></div><div class="countdown-unit"><strong id="countdown-seconds">--</strong><span>segundos</span></div></div><p class="countdown-caption">até 03 de setembro de 2026 · Teatro Municipal</p></div>');
 
   const target = new Date('2026-09-03T09:00:00-03:00').getTime();
   const update = () => {

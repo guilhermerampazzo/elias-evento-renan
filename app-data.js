@@ -77,7 +77,7 @@
 
   function whatsappMessage(lead, includeVoucher = false) {
     const greeting = `Olá, ${firstName(lead.name)}!`;
-    const base = `${greeting} Vimos que você teve interesse no evento da WOW Tax e ficamos muito felizes com isso. Sua inscrição está confirmada para 03 de setembro de 2026, no CENFORPE.`;
+    const base = `${greeting} Vimos que você teve interesse no evento da WOW Tax e ficamos muito felizes com isso. Sua inscrição está confirmada para 03 de setembro de 2026, no Teatro Municipal Paulo Machado de Carvalho.`;
     if (!includeVoucher) return base;
     const link = new URL(`/obrigado?id=${encodeURIComponent(lead.id)}`, window.location.origin).href;
     return `${base} Seu voucher é ${lead.voucherCode} e o código backup é ${lead.backupCode}. Guarde esta mensagem ou abra novamente: ${link}`;

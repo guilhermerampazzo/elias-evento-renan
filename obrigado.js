@@ -75,7 +75,7 @@
     context.fillText(lead.backupCode, 110, 547);
     context.fillStyle = '#64717a';
     context.font = '500 17px Manrope, Arial';
-    context.fillText('CENFORPE · São Bernardo do Campo', 110, 714);
+    context.fillText('Teatro Municipal · São Caetano do Sul', 110, 714);
     context.fillText('Apresente este voucher na recepção.', 110, 750);
     context.drawImage(qrCanvas, 930, 190, 280, 280);
     context.fillStyle = '#0c2032';
