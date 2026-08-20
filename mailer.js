@@ -63,7 +63,7 @@ function receiptHtml(lead) {
           </td></tr>
           <tr><td style="padding:28px 32px;">
             <p style="margin:0 0 18px;font-size:16px;line-height:1.6;">Olá, <strong>${safeName}</strong>. Sua inscrição para o evento foi confirmada.</p>
-            <p style="margin:0 0 24px;color:#64717a;font-size:14px;line-height:1.6;">Apresente este QR Code na recepção do Teatro Municipal Paulo Machado de Carvalho. O código backup abaixo serve como alternativa caso a leitura não funcione.</p>
+            <p style="margin:0 0 24px;color:#64717a;font-size:14px;line-height:1.6;">Apresente este QR Code na recepção do Teatro Municipal Paulo Machado de Carvalho - SCS. O código backup abaixo serve como alternativa caso a leitura não funcione.</p>
             <table role="presentation" width="100%" cellspacing="0" cellpadding="0" style="border-top:1px solid #ded8cc;border-bottom:1px solid #ded8cc;">
               <tr><td style="padding:14px 0;color:#64717a;font-size:11px;">PARTICIPANTE</td><td align="right" style="padding:14px 0;font-size:13px;font-weight:700;">${safeName}</td></tr>
               <tr><td style="padding:14px 0;color:#64717a;font-size:11px;">EMPRESA</td><td align="right" style="padding:14px 0;font-size:13px;font-weight:700;">${safeCompany}</td></tr>
@@ -78,7 +78,7 @@ function receiptHtml(lead) {
             </div>
             <p style="margin:24px 0 0;font-size:13px;line-height:1.6;">Se precisar abrir o voucher novamente, use este link:<br><a href="${safeUrl}" style="color:#92723d;">${safeUrl}</a></p>
           </td></tr>
-          <tr><td style="padding:22px 32px;background:#0c2032;color:#d9dfdc;font-size:12px;line-height:1.6;">03 de setembro de 2026 · a partir das 9h<br>Teatro Municipal Paulo Machado de Carvalho · São Caetano do Sul<br><span style="color:#ead4a0;">Evento gratuito · vagas limitadas</span></td></tr>
+          <tr><td style="padding:22px 32px;background:#0c2032;color:#d9dfdc;font-size:12px;line-height:1.6;">03 de setembro de 2026 · a partir das 9h<br>Teatro Municipal Paulo Machado de Carvalho - SCS<br><span style="color:#ead4a0;">Evento gratuito · vagas limitadas</span></td></tr>
         </table>
       </td></tr>
     </table>
@@ -91,7 +91,7 @@ function receiptText(lead) {
     `Olá, ${lead.name}. Sua inscrição para o evento WOW Tax foi confirmada.`,
     '',
     '03 de setembro de 2026 · a partir das 9h',
-    'Teatro Municipal Paulo Machado de Carvalho · São Caetano do Sul',
+    'Teatro Municipal Paulo Machado de Carvalho - SCS',
     '',
     `Voucher: ${lead.voucherCode}`,
     `Código backup: ${lead.backupCode}`,
