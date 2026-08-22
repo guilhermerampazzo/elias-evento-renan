@@ -12,6 +12,15 @@
     return;
   }
 
+  // Meta Pixel - ViewContent + CompleteRegistration on voucher view (deduplicated with CAPI via eventID lead_<id>)
+  try {
+    if (typeof window.fbq === 'function') {
+      window.fbq('track', 'ViewContent', { content_name: 'Voucher_WOW_03Set', content_ids: [lead.id] });
+      // Only fire CompleteRegistration once per voucher view; deduplicated with script.js event via same eventID
+      window.fbq('track', 'Lead', { content_name: 'Voucher_View' });
+    }
+  } catch (e) {}
+
   document.querySelector('#lead-name').textContent = app.firstName(lead.name) + '.';
   document.querySelector('#card-name').textContent = lead.name;
   document.querySelector('#card-company').textContent = lead.company || 'Não informado';

@@ -1,6 +1,8 @@
 const http = require('node:http');
 const fs = require('node:fs');
 const path = require('node:path');
+const https = require('node:https');
+const crypto = require('node:crypto');
 const { URL } = require('node:url');
 const db = require('./database');
 const { sendLeadReceipt } = require('./mailer');
@@ -11,6 +13,98 @@ const HOST = process.env.HOST || '0.0.0.0';
 const NODE_ENV = process.env.NODE_ENV || 'development';
 const SESSION_TTL_MS = Math.max(1, Number(process.env.SESSION_TTL_HOURS || 8)) * 60 * 60 * 1000;
 const MAX_BODY_BYTES = 32 * 1024;
+
+// Meta CAPI (privado - nunca exposto no HTML)
+const META_PIXEL_ID = String(process.env.META_PIXEL_ID || '1051554627771938').trim();
+const META_ACCESS_TOKEN = String(process.env.META_ACCESS_TOKEN || '').trim();
+const META_TEST_EVENT_CODE = String(process.env.META_TEST_EVENT_CODE || '').trim();
+const PUBLIC_URL = String(process.env.PUBLIC_URL || 'https://evento.wowtaxmoment.com').replace(/\/$/, '');
+
+function sha256Hex(value) {
+  const v = String(value || '').trim().toLowerCase();
+  if (!v) return null;
+  return crypto.createHash('sha256').update(v, 'utf8').digest('hex');
+}
+function getHashedUserData(lead, request) {
+  const cookies = parseCookies(request);
+  const email = lead && lead.email ? String(lead.email).trim().toLowerCase() : null;
+  const phoneDigits = lead && lead.phone ? String(lead.phone).replace(/\D/g, '') : null;
+  // Meta expects phone with country code; normalize to 55+digits if missing
+  let phNorm = null;
+  if (phoneDigits) {
+    phNorm = phoneDigits.startsWith('55') ? phoneDigits : `55${phoneDigits}`;
+  }
+  const ud = {};
+  const emHash = email ? sha256Hex(email) : null;
+  if (emHash) ud.em = [emHash];
+  const phHash = phNorm ? sha256Hex(phNorm) : null;
+  if (phHash) ud.ph = [phHash];
+  // Optional: name hashing for better match
+  if (lead && lead.name) {
+    const parts = String(lead.name).trim().toLowerCase().split(/\s+/);
+    if (parts[0]) { const h = sha256Hex(parts[0]); if (h) ud.fn = [h]; }
+    if (parts.length > 1) { const h = sha256Hex(parts.slice(-1)[0]); if (h) ud.ln = [h]; }
+  }
+  // Client info (plain, not hashed)
+  const ip = (request.headers['x-forwarded-for'] || '').split(',')[0].trim() || clientAddress(request);
+  if (ip && ip !== 'unknown') ud.client_ip_address = ip;
+  const ua = String(request.headers['user-agent'] || '').trim();
+  if (ua) ud.client_user_agent = ua;
+  // _fbc / _fbp cookies for attribution
+  if (cookies._fbc) ud.fbc = cookies._fbc;
+  if (cookies._fbp) ud.fbp = cookies._fbp;
+  return ud;
+}
+function sendMetaCAPI(eventName, lead, request, eventId) {
+  if (!META_PIXEL_ID || !META_ACCESS_TOKEN) return Promise.resolve(null);
+  const eventTime = Math.floor(Date.now() / 1000);
+  const eventSourceUrl = PUBLIC_URL + (request.headers.referer || request.headers.origin || '/');
+  // BUILD payload
+  const payload = {
+    data: [
+      {
+        event_name: eventName,
+        event_time: eventTime,
+        event_id: eventId || `lead_${lead && lead.id ? lead.id : Date.now()}`,
+        action_source: 'website',
+        event_source_url: eventSourceUrl,
+        user_data: getHashedUserData(lead, request)
+      }
+    ]
+  };
+  if (META_TEST_EVENT_CODE) payload.test_event_code = META_TEST_EVENT_CODE;
+  const body = JSON.stringify(payload);
+  const options = {
+    hostname: 'graph.facebook.com',
+    path: `/v20.0/${META_PIXEL_ID}/events?access_token=${encodeURIComponent(META_ACCESS_TOKEN)}`,
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Content-Length': Buffer.byteLength(body)
+    }
+  };
+  return new Promise((resolve) => {
+    const req = https.request(options, (res) => {
+      let data = '';
+      res.on('data', (c) => (data += c));
+      res.on('end', () => {
+        if (res.statusCode >= 200 && res.statusCode < 300) {
+          if (process.env.META_PIXEL_DEBUG === 'true') console.log('[CAPI] success', eventName, data);
+          resolve(data);
+        } else {
+          console.error('[CAPI] failed', res.statusCode, data);
+          resolve(null);
+        }
+      });
+    });
+    req.on('error', (err) => {
+      console.error('[CAPI] error', err.message);
+      resolve(null);
+    });
+    req.write(body);
+    req.end();
+  });
+}
 
 const PAGE_ROUTES = new Map([
   ['/index.html', '/'],
@@ -277,6 +371,11 @@ async function handleApi(request, response, pathname, requestUrl) {
     try { body = await readBody(request); } catch (error) { return sendJson(response, error.statusCode || 400, { error: error.message }); }
     try {
       const lead = await db.createLead(leadInput(body));
+      // Fire CAPI server-side (non-blocking for user, deduplicated with browser via event_id lead_<id>)
+      const capiEventId = `lead_${lead.id}`;
+      sendMetaCAPI('CompleteRegistration', lead, request, capiEventId).catch(() => {});
+      // Also send Lead event for optimization flexibility
+      sendMetaCAPI('Lead', lead, request, `lead_lead_${lead.id}`).catch(() => {});
       try {
         await sendLeadReceipt(lead);
         await db.updateLeadEmailStatus(lead.id, 'sent');

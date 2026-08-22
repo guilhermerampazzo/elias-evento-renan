@@ -1,6 +1,32 @@
 const form = document.querySelector('#registration-form');
 const app = window.WowTaxApp;
 
+// --- Meta Pixel helpers (ID 1051554627771938) ---
+function fbqSafe() {
+  if (typeof window.fbq === 'function') {
+    try { window.fbq.apply(null, arguments); } catch (e) { /* noop */ }
+  }
+}
+function trackCtaClick(label) {
+  fbqSafe('track', 'Lead', { content_name: label || 'CTA_Quero_Participar', content_category: 'cta_click' });
+  fbqSafe('trackCustom', 'CtaClick', { label: label || 'CTA_Quero_Participar' });
+}
+function trackInitiateCheckout() {
+  if (trackInitiateCheckout._fired) return;
+  trackInitiateCheckout._fired = true;
+  fbqSafe('track', 'InitiateCheckout', { content_name: 'Inscricao_WOW_03Set', num_items: 1 });
+}
+function trackCompleteRegistration(lead, eventId) {
+  const adv = {};
+  // Advanced Matching hash will be done server-side via CAPI; client sends raw for browser matching (Meta hashes automatically)
+  if (lead && lead.email) adv.em = lead.email.trim().toLowerCase();
+  if (lead && lead.phone) adv.ph = String(lead.phone).replace(/\D/g, '');
+  const opts = eventId ? { eventID: eventId } : {};
+  // Browser deduplication: eventID must match CAPI event_id
+  fbqSafe('track', 'CompleteRegistration', { content_name: 'Inscricao_WOW_03Set', currency: 'BRL', value: 0 }, opts);
+  fbqSafe('track', 'Lead', { content_name: 'Inscricao_Confirmada', currency: 'BRL', value: 0 }, opts);
+}
+
 function updateLandingCopy() {
   const heroEntry = Array.from(document.querySelectorAll('.hero-rail span')).find((item) => item.textContent.toLowerCase().includes('entrada'));
   if (heroEntry) heroEntry.textContent = 'EVENTO GRATUITO';
@@ -126,10 +152,28 @@ function setupSectionCtas() {
   }
 }
 
+function setupPixelEvents() {
+  // Delegated click for all CTAs that scroll to #inscricao (including dynamically injected section-cta)
+  document.addEventListener('click', (e) => {
+    const cta = e.target.closest('a[href="#inscricao"], .header-cta, .section-cta a, .hero-copy .button');
+    if (cta) {
+      const label = cta.textContent.trim().slice(0, 40) || 'CTA_Quero_Participar';
+      trackCtaClick(label);
+    }
+  });
+  // InitiateCheckout on first interaction with form
+  if (form) {
+    ['focus', 'click'].forEach((evt) => {
+      form.addEventListener(evt, trackInitiateCheckout, { once: true, capture: true });
+    });
+  }
+}
+
 updateLandingCopy();
 setupLeadForm();
 setupCountdown();
 setupSectionCtas();
+setupPixelEvents();
 
 if (form && app) {
   form.addEventListener('submit', async (event) => {
@@ -155,6 +199,16 @@ if (form && app) {
         cnpj: formData.get('cnpj'),
         consent: formData.get('consent') === 'on'
       });
+      // Meta Pixel - CompleteRegistration (browser) with deduplication ID matching CAPI
+      try {
+        const eventId = 'lead_' + lead.id;
+        trackCompleteRegistration({
+          email: formData.get('email'),
+          phone: formData.get('phone')
+        }, eventId);
+        // Small delay to ensure fbq beacon fires before redirect (beacon is async, 300ms max)
+        await new Promise((r) => setTimeout(r, 250));
+      } catch (e) { /* pixel failure should not block redirect */ }
       const emailState = lead.emailStatus === 'sent' ? '' : '&email=failed';
       window.location.href = `/obrigado?id=${encodeURIComponent(lead.id)}${emailState}`;
     } catch (error) {
