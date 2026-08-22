@@ -19,6 +19,10 @@ services:
       DB_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD must be set in .env}
       DB_POOL_MAX: ${DB_POOL_MAX:-10}
       PUBLIC_URL: ${PUBLIC_URL:-https://evento.wowtaxmoment.com}
+      META_PIXEL_ID: ${META_PIXEL_ID:-1051554627771938}
+      META_ACCESS_TOKEN: ${META_ACCESS_TOKEN:-}
+      META_TEST_EVENT_CODE: ${META_TEST_EVENT_CODE:-}
+      META_PIXEL_DEBUG: ${META_PIXEL_DEBUG:-false}
       SMTP_HOST: ${SMTP_HOST:-host.docker.internal}
       SMTP_PORT: ${SMTP_PORT:-25}
       SMTP_SECURE: ${SMTP_SECURE:-false}
