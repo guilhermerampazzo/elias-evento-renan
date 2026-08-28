@@ -307,22 +307,35 @@ h1,h2,h3,p{margin-top:0}
 .location-address{display:block;margin-top:7px;font:400 14px/1.6 'DM Sans',Arial,sans-serif;color:var(--muted);letter-spacing:.2px}
 
 /* ---- Landing compacta ---- */
-.hero-compact{min-height:0;padding:60px clamp(20px,7vw,120px) 88px}
-.hero-compact .hero-visual{height:440px;margin-top:0}
-.hero-compact .hero-photo{inset:0 0 -88px 0}
-.hero-compact .hero-photo figcaption{bottom:104px}
+.hero-compact{min-height:0;padding:60px clamp(20px,7vw,120px) 0;grid-template-columns:1fr}
+.hero-rufino-inline{position:relative;margin:44px 0 0;max-width:880px;height:300px;overflow:hidden}
+.hero-rufino-inline img{width:100%;height:100%;object-fit:cover;object-position:center 20%;
+  -webkit-mask-image:linear-gradient(to right,#000 70%,transparent 100%),linear-gradient(to top,#000 75%,transparent 100%);
+  -webkit-mask-composite:source-in;mask-image:linear-gradient(to right,#000 70%,transparent 100%),linear-gradient(to top,#000 75%,transparent 100%);mask-composite:intersect}
+.hero-rufino-inline:after{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(10,31,41,.75),transparent 45%)}
+.hero-rufino-inline figcaption{position:absolute;left:26px;bottom:20px;z-index:2}
+.hero-rufino-inline figcaption span{display:block;font:800 9px Manrope;letter-spacing:2.4px;color:var(--gold-pale)}
+.hero-rufino-inline figcaption strong{display:block;margin-top:4px;font:700 20px Manrope;color:#fff}
 .compact-speakers{display:block;padding:64px max(20px,calc((100% - 1120px)/2)) 72px;background:var(--ink);color:#fff}
 .speakers-head{display:flex;align-items:baseline;justify-content:space-between;gap:20px;margin-bottom:30px;border-bottom:1px solid rgba(198,161,92,.4);padding-bottom:22px}
 .speakers-head .eyebrow{margin:0}
 .speakers-head h2{margin:0;font:600 clamp(26px,3.2vw,40px)/1 Manrope;letter-spacing:-.04em;color:#f7f2e9}
-.speakers-head h2 i{font:400 1.02em 'Instrument Serif',Georgia,serif;color:var(--gold-pale)}
 .speakers-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
-.speaker{display:flex;align-items:center;gap:18px;background:rgba(255,255,255,.035);border:1px solid rgba(198,161,92,.35);padding:22px 20px;transition:border-color 160ms ease,transform 160ms ease}
+.speaker{display:flex;flex-direction:column;background:rgba(255,255,255,.035);border:1px solid rgba(198,161,92,.35);padding:26px 22px;transition:border-color 160ms ease,transform 160ms ease}
 .speaker:hover{border-color:rgba(198,161,92,.75);transform:translateY(-3px)}
-.speaker img{width:84px;height:84px;border-radius:50%;object-fit:cover;object-position:center top;flex:none;border:2px solid var(--gold)}
 .speaker span{display:block;font:800 9px Manrope;letter-spacing:2px;color:var(--gold-pale)}
-.speaker h3{margin:5px 0 0;font:700 17px Manrope;color:#f7f2e9}
-.speaker p{margin:6px 0 0;font-size:12px;line-height:1.55;color:#b9c7c7}
+.speaker h3{margin:6px 0 0;font:700 19px Manrope;color:#f7f2e9}
+.speaker p{margin:10px 0 16px;font-size:13px;line-height:1.6;color:#b9c7c7;flex:1}
+.speaker-more{display:inline-flex;align-items:center;gap:8px;background:none;border:0;border-bottom:1px solid var(--gold);padding:0 0 5px;color:var(--gold-pale);font:700 10px Manrope;letter-spacing:2px;text-transform:uppercase;cursor:pointer;align-self:flex-start;transition:color 160ms ease}
+.speaker-more:hover{color:#fff}
+.speaker-more i{font-style:normal;transition:transform 160ms ease}
+.speaker-more:hover i{transform:translateX(4px)}
+.speaker-modal{width:min(560px,calc(100vw - 40px));border:1px solid rgba(198,161,92,.5);padding:42px 40px;background:#fffdf9;color:var(--ink)}
+.speaker-modal::backdrop{background:rgba(4,19,28,.78)}
+.speaker-modal h3{margin:8px 0 18px;font:600 30px Manrope;letter-spacing:-.04em;color:var(--ink)}
+.speaker-modal p{margin:0 0 14px;font-size:14px;line-height:1.7;color:#3d4a52}
+.speaker-modal-close{position:absolute;top:14px;right:16px;width:34px;height:34px;border:1px solid #ded8cc;border-radius:50%;background:none;font-size:18px;line-height:1;color:#64717a;cursor:pointer;transition:color 160ms ease,border-color 160ms ease}
+.speaker-modal-close:hover{color:var(--ink);border-color:var(--ink)}
 .registration-compact .registration-message{padding:70px clamp(20px,6vw,90px)}
 .registration-compact .form-area{padding:70px clamp(20px,6vw,90px)}
 .registration-compact .spots-line{margin-top:36px}

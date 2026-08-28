@@ -26,20 +26,25 @@
         <p class="hero-deck">Indústria e Comércio: entenda o que muda e como proteger sua margem.</p>
         <p class="hero-meta">03/09 <span>•</span> 9h <span>•</span> Teatro Municipal Paulo Machado de Carvalho — Al. Conde de Porto Alegre, 840 · São Caetano do Sul</p>
         <a class="button button-gold" href="#inscricao">INSCREVA-SE GRATUITAMENTE</a>
-      </div>
-      <div class="hero-visual">
-        <figure class="hero-photo"><img src="arquivos/rufinho.jpg" alt="Geraldo Rufino" /><figcaption>Geraldo Rufino</figcaption></figure>
+        <figure class="hero-rufino-inline"><img src="arquivos/rufinho.jpg" alt="Geraldo Rufino" /><figcaption><span>PARTICIPAÇÃO ESPECIAL</span><strong>Geraldo Rufino</strong></figcaption></figure>
       </div>
     </section>
 
     <section class="compact-speakers">
       <div class="speakers-head"><p class="eyebrow">NO PALCO</p><h2>Quem vai estar lá.</h2></div>
       <div class="speakers-grid">
-        <article class="speaker"><img src="arquivos/rufinho.jpg" alt="Geraldo Rufino" /><div><span>PARTICIPAÇÃO ESPECIAL</span><h3>Geraldo Rufino</h3><p>Empreendedorismo e transformação: uma história de atitude e movimento.</p></div></article>
-        <article class="speaker"><img src="arquivos/sigrid.jpg" alt="Sigrid Kersting" /><div><span>PALESTRANTE</span><h3>Sigrid Kersting</h3><p>Mestre em Controladoria e Finanças, ex-Deloitte, +25 anos em tributário.</p></div></article>
-        <article class="speaker"><img src="arquivos/fabio.jpg" alt="Fabio Rodrigues" /><div><span>PALESTRANTE</span><h3>Fabio Rodrigues</h3><p>Advogado e mestre em Ciências Contábeis, professor e autor.</p></div></article>
+        <article class="speaker"><div><span>PARTICIPAÇÃO ESPECIAL</span><h3>Geraldo Rufino</h3><p>Empreendedorismo e transformação: uma história de atitude e movimento.</p><button class="speaker-more" type="button" data-speaker="rufino">Conhecer <i>→</i></button></div></article>
+        <article class="speaker"><div><span>PALESTRANTE</span><h3>Sigrid Kersting</h3><p>Mestre em Controladoria e Finanças, ex-Deloitte, +25 anos em tributário.</p><button class="speaker-more" type="button" data-speaker="sigrid">Conhecer <i>→</i></button></div></article>
+        <article class="speaker"><div><span>PALESTRANTE</span><h3>Fabio Rodrigues</h3><p>Advogado e mestre em Ciências Contábeis, professor e autor.</p><button class="speaker-more" type="button" data-speaker="fabio">Conhecer <i>→</i></button></div></article>
       </div>
     </section>
+
+    <dialog class="speaker-modal" id="speaker-modal">
+      <button class="speaker-modal-close" type="button" aria-label="Fechar">×</button>
+      <p class="form-eyebrow" id="speaker-modal-role"></p>
+      <h3 id="speaker-modal-name"></h3>
+      <div id="speaker-modal-bio"></div>
+    </dialog>
 
     <section class="registration registration-compact" id="inscricao">
       <div class="registration-message">
@@ -58,5 +63,27 @@
   <footer class="footer footer-compact"><img src="arquivos/wowtaxmoment_logo.svg" alt="WOW Tax" /><p>Reforma Tributária 2026 · Indústria e Comércio</p><div class="footer-links"><a href="https://www.instagram.com/wow.tax.moment/" target="_blank" rel="noreferrer">@wow.tax.moment</a><a href="/login">Acesso equipe</a></div></footer>
   <script src="app-data.js"></script>
   <script src="script.js?v=4"></script>
+  <script>
+    (() => {
+      const bios = {
+        rufino: { role: 'PARTICIPAÇÃO ESPECIAL', name: 'Geraldo Rufino', bio: ['Empreendedor e referência em transformação, traz para o palco uma história construída com experiência, atitude e a capacidade de transformar desafios em movimento.'] },
+        sigrid: { role: 'PALESTRANTE', name: 'Sigrid Kersting', bio: ['Contadora pela UFRGS, mestre em Controladoria e Finanças, empresária, professora e palestrante, com mais de 25 anos de experiência na área tributária.', 'Ex-Deloitte, onde atuou por oito anos, consolidou sua experiência como executiva na área de Tax de outras multinacionais. Hoje, está à frente de três empresas dedicadas à consultoria tributária, tecnologia e educação.', 'Formou mais de 6 mil Tributaristas Camisa 10 em todo o Brasil.'] },
+        fabio: { role: 'PALESTRANTE', name: 'Fabio Rodrigues', bio: ['Advogado e mestre em Ciências Contábeis, professor em cursos de pós-graduação e autor de diversos livros em matéria jurídica e contábil.', 'Sócio da Faculdade BSSP e da BSSP Consulting, une experiência acadêmica, jurídica e empresarial para traduzir temas complexos em decisões mais claras.'] }
+      };
+      const modal = document.querySelector('#speaker-modal');
+      document.querySelectorAll('.speaker-more').forEach((button) => {
+        button.addEventListener('click', () => {
+          const data = bios[button.dataset.speaker];
+          if (!data) return;
+          document.querySelector('#speaker-modal-role').textContent = data.role;
+          document.querySelector('#speaker-modal-name').textContent = data.name;
+          document.querySelector('#speaker-modal-bio').innerHTML = data.bio.map((paragraph) => `<p>${paragraph}</p>`).join('');
+          modal.showModal();
+        });
+      });
+      modal.querySelector('.speaker-modal-close').addEventListener('click', () => modal.close());
+      modal.addEventListener('click', (event) => { if (event.target === modal) modal.close(); });
+    })();
+  </script>
 </body>
 </html>
