@@ -27,9 +27,12 @@ h1,h2,h3,p{margin-top:0}
 .hero h1 i,.hero h1 strong{font-family:'Instrument Serif',Georgia,serif;letter-spacing:-.03em;font-weight:400;font-style:italic}
 .hero h1 i{color:var(--gold-pale)}
 .hero h1 strong{font-size:1.04em;color:#fff}
-.hero-seal{display:inline-flex;align-items:center;gap:12px;margin:0 0 30px;padding:0 0 12px;border-bottom:1px solid rgba(198,161,92,.6);color:var(--gold-pale);font:700 11px 'Manrope';letter-spacing:2.8px;text-transform:uppercase}
-.hero-seal:before{content:'';width:7px;height:7px;background:var(--gold);transform:rotate(45deg);flex:none}
-.hero-seal em{font-style:normal;color:#fff}
+.seal-badge{position:relative;display:block;width:158px;height:158px;margin:0 0 28px;transform:rotate(-6deg);filter:drop-shadow(0 12px 26px rgba(0,0,0,.4))}
+.seal-svg{position:absolute;inset:0;width:100%;height:100%}
+.seal-text{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;color:#fff;font:800 11px Manrope;letter-spacing:2px;text-align:center;padding:0 18px}
+.seal-text strong{color:var(--gold-pale);font-family:Manrope;font-weight:800;font-size:19px;letter-spacing:.6px;line-height:1.05}
+.seal-text b{font-size:9.5px;font-weight:700;letter-spacing:2.4px}
+.seal-text i{font-style:normal;color:var(--gold-pale);font-size:10px;line-height:1;margin:2px 0}
 .hero-deck{font:500 21px 'Instrument Serif',Georgia,serif;color:var(--gold-pale);margin:26px 0 14px;max-width:520px}
 .hero-meta{font:700 13px 'Manrope';letter-spacing:1.4px;text-transform:uppercase;color:#d6d8d0;margin:0 0 34px}
 .hero-meta span{color:var(--gold);margin:0 6px}
@@ -214,7 +217,10 @@ h1,h2,h3,p{margin-top:0}
 .header-cta{margin-left:auto;padding:11px 13px;font-size:9px}
 .hero{padding:53px 20px 135px;min-height:840px}
 .hero h1{font-size:42px}
-.hero-seal{font-size:10px;letter-spacing:2px;padding-bottom:10px;margin-bottom:24px}
+.seal-badge{width:126px;height:126px}
+.seal-badge .seal-text strong{font-size:15px}
+.seal-badge .seal-text b{font-size:8px}
+.seal-badge .seal-text{letter-spacing:1.6px}
 .hero-deck{font-size:20px}
 .hero-meta{font-size:11px;letter-spacing:1px}
 .hero-visual{height:330px;margin-top:15px}
