@@ -19,12 +19,15 @@ h1,h2,h3,p{margin-top:0}
 .eyebrow,.section-label,.person-line span,.profile span,.form-eyebrow,.location-data span{font-size:10px;letter-spacing:2.4px;font-weight:700;text-transform:uppercase}
 .eyebrow{color:var(--gold-pale);margin-bottom:28px}
 .hero-copy{max-width:650px}
-.hero h1{font:600 clamp(52px,7.2vw,102px)/.88 Manrope,Arial,sans-serif;letter-spacing:-.07em;margin:0;color:#f7f2e9}
+.hero h1{font:600 clamp(42px,5.4vw,72px)/.95 Manrope,Arial,sans-serif;letter-spacing:-.06em;margin:0;color:#f7f2e9}
 .hero h1 i,.hero h1 strong{font-family:'Instrument Serif',Georgia,serif;letter-spacing:-.03em;font-weight:400;font-style:italic}
 .hero h1 i{color:var(--gold-pale)}
 .hero h1 strong{font-size:1.04em;color:#fff}
-.hero-deck{font:500 23px 'Instrument Serif',Georgia,serif;color:var(--gold-pale);margin:28px 0 14px}
-.hero-intro{font-size:15px;line-height:1.7;color:#b9c7c7;max-width:385px;margin-bottom:31px}
+.hero-seal{display:inline-flex;align-items:center;gap:8px;padding:9px 16px;border:1px solid var(--gold);border-radius:999px;background:rgba(198,161,92,.12);color:var(--gold-pale);font:800 10px 'Manrope';letter-spacing:1.8px;text-transform:uppercase;margin:0 0 26px}
+.hero-seal:before{content:'';width:6px;height:6px;border-radius:50%;background:var(--gold)}
+.hero-deck{font:500 21px 'Instrument Serif',Georgia,serif;color:var(--gold-pale);margin:26px 0 14px;max-width:520px}
+.hero-meta{font:700 13px 'Manrope';letter-spacing:1.4px;text-transform:uppercase;color:#d6d8d0;margin:0 0 34px}
+.hero-meta span{color:var(--gold);margin:0 6px}
 .button{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:15px 21px;border:0;font:700 11px 'DM Sans';letter-spacing:1px;text-transform:uppercase;text-decoration:none;cursor:pointer;transition:transform 160ms var(--ease-out),background 160ms ease,color 160ms ease}
 .hero-copy>.button{min-width:228px;min-height:58px;padding:19px 30px;font-size:12px;letter-spacing:1.2px}
 .section-cta{display:flex;flex-direction:column;align-items:flex-start;gap:10px;margin-top:38px}
@@ -50,12 +53,9 @@ h1,h2,h3,p{margin-top:0}
 .hero-arc-small{width:290px;height:290px;right:24%;top:21%;border-style:solid;opacity:.5}
 .hero-rufino{position:absolute;width:min(30vw,390px);height:475px;right:20%;bottom:0;overflow:hidden;border-radius:195px 195px 0 0;background:#111;z-index:1}
 .hero-rufino img{width:100%;height:100%;object-fit:cover;object-position:center}
-.hero-rufino:after,.hero-renan:after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 62%,rgba(7,28,39,.65))}
-.hero-rufino figcaption,.hero-renan figcaption{position:absolute;bottom:19px;left:20px;z-index:2;font:600 12px Manrope;letter-spacing:1px;color:white}
-.hero-renan{position:absolute;width:min(19vw,235px);height:300px;right:2%;bottom:0;overflow:hidden;background:#82786f;border:1px solid var(--gold);z-index:2}
-.hero-renan img{width:100%;height:100%;object-fit:cover;object-position:center top}
-.hero-renan figcaption{bottom:15px;left:15px;color:var(--gold-pale);font-size:10px}
-.hero-side-note{position:absolute;right:-3%;top:2%;writing-mode:vertical-rl;color:var(--gold-pale);font-size:9px;letter-spacing:2.6px;line-height:1.5;z-index:2}
+.hero-rufino:after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 62%,rgba(7,28,39,.65))}
+.hero-rufino figcaption{position:absolute;bottom:19px;left:20px;z-index:2;font:600 12px Manrope;letter-spacing:1px;color:white}
+.hero-rufino{right:12%}
 .hero-rail{position:absolute;bottom:34px;left:clamp(20px,7vw,120px);right:clamp(20px,7vw,120px);display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid rgba(198,161,92,.7);border-bottom:1px solid rgba(198,161,92,.7)}
 .hero-rail span{padding:18px 18px 18px 0;border-right:1px solid rgba(198,161,92,.35);font-size:10px;font-weight:700;letter-spacing:1.5px;color:#d6d8d0}
 .hero-rail span+span{padding-left:20px}
@@ -191,8 +191,6 @@ h1,h2,h3,p{margin-top:0}
 @media(max-width:900px){.hero{grid-template-columns:1fr;padding-top:60px;min-height:980px}
 .hero-visual{height:470px;margin-top:35px}
 .hero-rufino{width:300px;height:420px;right:20%}
-.hero-renan{width:180px;height:250px;right:4%}
-.hero-side-note{right:-1%}
 .hero-rail{grid-template-columns:repeat(4,1fr)}
 .hero-rail span{font-size:8px}
 .manifesto-grid,.wow-grid,.location,.faq{grid-template-columns:1fr;gap:50px}
@@ -211,18 +209,16 @@ h1,h2,h3,p{margin-top:0}
 .masthead-note{display:none}
 .header-cta{margin-left:auto;padding:11px 13px;font-size:9px}
 .hero{padding:53px 20px 135px;min-height:840px}
-.hero h1{font-size:49px}
+.hero h1{font-size:42px}
+.hero-seal{font-size:9px;letter-spacing:1.4px}
 .hero-deck{font-size:20px}
-.hero-intro{font-size:13px;max-width:310px}
+.hero-meta{font-size:11px;letter-spacing:1px}
 .hero-visual{height:365px;margin-top:25px}
 .hero-visual:after{width:420px;height:420px;right:-280px;top:10px}
 .hero-arc{width:410px;height:410px;right:-180px}
 .hero-arc-small{width:260px;height:260px;right:-75px;top:70px}
 .hero-rufino{width:230px;height:350px;right:22%}
-.hero-renan{width:137px;height:200px;right:1%}
 .hero-rufino figcaption{left:13px;bottom:14px;font-size:10px}
-.hero-renan figcaption{font-size:8px;bottom:11px;left:9px}
-.hero-side-note{display:none}
 .hero-rail{left:20px;right:20px;grid-template-columns:1fr 1fr;bottom:24px}
 .hero-rail span{padding:11px 6px 11px 0;font-size:7px}
 .hero-rail span+span{padding-left:10px}
