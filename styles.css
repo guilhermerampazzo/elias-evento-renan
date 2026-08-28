@@ -23,8 +23,11 @@ h1,h2,h3,p{margin-top:0}
 .hero h1 i,.hero h1 strong{font-family:'Instrument Serif',Georgia,serif;letter-spacing:-.03em;font-weight:400;font-style:italic}
 .hero h1 i{color:var(--gold-pale)}
 .hero h1 strong{font-size:1.04em;color:#fff}
-.hero-seal{display:inline-flex;align-items:center;gap:8px;padding:9px 16px;border:1px solid var(--gold);border-radius:999px;background:rgba(198,161,92,.12);color:var(--gold-pale);font:800 10px 'Manrope';letter-spacing:1.8px;text-transform:uppercase;margin:0 0 26px}
-.hero-seal:before{content:'';width:6px;height:6px;border-radius:50%;background:var(--gold)}
+.hero-seal{position:relative;display:inline-flex;align-items:center;gap:9px;padding:12px 22px;border-radius:999px;background:var(--gold);color:var(--ink);font:800 12px 'Manrope';letter-spacing:2px;text-transform:uppercase;margin:0 0 28px;box-shadow:0 10px 28px rgba(198,161,92,.35),0 0 0 0 rgba(198,161,92,.55);animation:hero-seal-pulse 2.4s ease-out infinite}
+.hero-seal:before{content:'★';font-size:13px;line-height:1}
+.hero-seal:after{content:'';position:absolute;inset:0;border-radius:inherit;border:1px solid rgba(255,255,255,.4)}
+@keyframes hero-seal-pulse{0%{box-shadow:0 10px 28px rgba(198,161,92,.35),0 0 0 0 rgba(198,161,92,.55)}70%{box-shadow:0 10px 28px rgba(198,161,92,.35),0 0 0 14px rgba(198,161,92,0)}100%{box-shadow:0 10px 28px rgba(198,161,92,.35),0 0 0 0 rgba(198,161,92,0)}}
+@media(prefers-reduced-motion:reduce){.hero-seal{animation:none}}
 .hero-deck{font:500 21px 'Instrument Serif',Georgia,serif;color:var(--gold-pale);margin:26px 0 14px;max-width:520px}
 .hero-meta{font:700 13px 'Manrope';letter-spacing:1.4px;text-transform:uppercase;color:#d6d8d0;margin:0 0 34px}
 .hero-meta span{color:var(--gold);margin:0 6px}
@@ -210,7 +213,7 @@ h1,h2,h3,p{margin-top:0}
 .header-cta{margin-left:auto;padding:11px 13px;font-size:9px}
 .hero{padding:53px 20px 135px;min-height:840px}
 .hero h1{font-size:42px}
-.hero-seal{font-size:9px;letter-spacing:1.4px}
+.hero-seal{font-size:10px;letter-spacing:1.5px;padding:10px 16px}
 .hero-deck{font-size:20px}
 .hero-meta{font-size:11px;letter-spacing:1px}
 .hero-visual{height:365px;margin-top:25px}
