@@ -26,16 +26,14 @@
         <p class="hero-deck">Indústria e Comércio: entenda o que muda e como proteger sua margem.</p>
         <p class="hero-meta">03/09 <span>•</span> 9h <span>•</span> Teatro Municipal Paulo Machado de Carvalho — Al. Conde de Porto Alegre, 840 · São Caetano do Sul</p>
         <a class="button button-gold" href="#inscricao">INSCREVA-SE GRATUITAMENTE</a>
-        <figure class="hero-rufino-inline"><img src="arquivos/rufinho.jpg" alt="Geraldo Rufino" /><figcaption><span>PARTICIPAÇÃO ESPECIAL</span><strong>Geraldo Rufino</strong></figcaption></figure>
       </div>
-    </section>
-
-    <section class="compact-speakers">
-      <div class="speakers-head"><p class="eyebrow">NO PALCO</p><h2>Quem vai estar lá.</h2></div>
-      <div class="speakers-grid">
-        <article class="speaker"><div><span>PARTICIPAÇÃO ESPECIAL</span><h3>Geraldo Rufino</h3><p>Empreendedorismo e transformação: uma história de atitude e movimento.</p><button class="speaker-more" type="button" data-speaker="rufino">Conhecer <i>→</i></button></div></article>
-        <article class="speaker"><div><span>PALESTRANTE</span><h3>Sigrid Kersting</h3><p>Mestre em Controladoria e Finanças, ex-Deloitte, +25 anos em tributário.</p><button class="speaker-more" type="button" data-speaker="sigrid">Conhecer <i>→</i></button></div></article>
-        <article class="speaker"><div><span>PALESTRANTE</span><h3>Fabio Rodrigues</h3><p>Advogado e mestre em Ciências Contábeis, professor e autor.</p><button class="speaker-more" type="button" data-speaker="fabio">Conhecer <i>→</i></button></div></article>
+      <div class="hero-visual">
+        <figure class="hero-photo"><img src="arquivos/rufinho.jpg" alt="Geraldo Rufino" /><figcaption>Geraldo Rufino</figcaption></figure>
+      </div>
+      <div class="hero-speakers">
+        <article class="speaker" data-speaker="rufino"><img src="arquivos/rufinho.jpg" alt="Geraldo Rufino" /><div><span>PARTICIPAÇÃO ESPECIAL</span><h3>Geraldo Rufino</h3><p>Empreendedorismo e transformação: uma história de atitude e movimento.</p></div></article>
+        <article class="speaker" data-speaker="sigrid"><img src="arquivos/sigrid.jpg" alt="Sigrid Kersting" /><div><span>PALESTRANTE</span><h3>Sigrid Kersting</h3><p>Mestre em Controladoria e Finanças, ex-Deloitte, +25 anos em tributário.</p></div></article>
+        <article class="speaker" data-speaker="fabio"><img src="arquivos/fabio.jpg" alt="Fabio Rodrigues" /><div><span>PALESTRANTE</span><h3>Fabio Rodrigues</h3><p>Advogado e mestre em Ciências Contábeis, professor e autor.</p></div></article>
       </div>
     </section>
 
@@ -71,9 +69,9 @@
         fabio: { role: 'PALESTRANTE', name: 'Fabio Rodrigues', bio: ['Advogado e mestre em Ciências Contábeis, professor em cursos de pós-graduação e autor de diversos livros em matéria jurídica e contábil.', 'Sócio da Faculdade BSSP e da BSSP Consulting, une experiência acadêmica, jurídica e empresarial para traduzir temas complexos em decisões mais claras.'] }
       };
       const modal = document.querySelector('#speaker-modal');
-      document.querySelectorAll('.speaker-more').forEach((button) => {
-        button.addEventListener('click', () => {
-          const data = bios[button.dataset.speaker];
+      document.querySelectorAll('.hero-speakers .speaker').forEach((card) => {
+        card.addEventListener('click', () => {
+          const data = bios[card.dataset.speaker];
           if (!data) return;
           document.querySelector('#speaker-modal-role').textContent = data.role;
           document.querySelector('#speaker-modal-name').textContent = data.name;
