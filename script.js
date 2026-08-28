@@ -131,11 +131,6 @@ function insertSectionCta(selector, buttonClass = 'button-gold') {
 }
 
 function setupSectionCtas() {
-  const heroCta = document.querySelector('.hero-copy .button');
-  if (heroCta && !heroCta.nextElementSibling?.classList.contains('cta-note')) {
-    heroCta.insertAdjacentHTML('afterend', '<span class="cta-note hero-free-note">Evento gratuito · vagas limitadas</span>');
-  }
-
   insertSectionCta('.manifesto .manifesto-grid');
   insertSectionCta('.editorial-copy > p:last-of-type');
   insertSectionCta('.questions .question-list');
