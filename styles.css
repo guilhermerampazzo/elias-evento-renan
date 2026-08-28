@@ -305,3 +305,20 @@ h1,h2,h3,p{margin-top:0}
 
 /* Location address under venue name */
 .location-address{display:block;margin-top:7px;font:400 14px/1.6 'DM Sans',Arial,sans-serif;color:var(--muted);letter-spacing:.2px}
+
+/* ---- Landing compacta ---- */
+.hero-compact{min-height:0;padding:60px clamp(20px,7vw,120px) 88px}
+.hero-compact .hero-visual{height:440px;margin-top:0}
+.hero-compact .hero-photo{inset:0 0 -88px 0}
+.hero-compact .hero-photo figcaption{bottom:104px}
+.compact-speakers{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;padding:54px max(20px,calc((100% - 1120px)/2));background:var(--gold-pale)}
+.speaker{display:flex;align-items:center;gap:16px;background:#fffdf9;border:1px solid #ded8cc;padding:16px 18px}
+.speaker img{width:72px;height:72px;border-radius:50%;object-fit:cover;object-position:center top;flex:none}
+.speaker span{display:block;font:800 9px Manrope;letter-spacing:2px;color:#92723d}
+.speaker h3{margin:5px 0 0;font:700 16px Manrope;color:var(--ink)}
+.speaker p{margin:4px 0 0;font-size:12px;line-height:1.5;color:#64717a}
+.registration-compact .registration-message{padding:70px clamp(20px,6vw,90px)}
+.registration-compact .form-area{padding:70px clamp(20px,6vw,90px)}
+.registration-compact .spots-line{margin-top:36px}
+.registration-compact .registration-message:after{display:none}
+@media(max-width:900px){.compact-speakers{grid-template-columns:1fr;padding:40px 20px}.speaker p{display:none}}
