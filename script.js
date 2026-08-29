@@ -168,8 +168,9 @@ function setupScarcity() {
   const badge = document.querySelector('[data-scarcity]');
   if (!badge || !app) return;
   const number = badge.querySelector('[data-remaining]');
-  app.availableSlots().then((slots) => {
-    const shown = Math.min(40, Math.max(0, slots));
+  app.availableSlots().then((payload) => {
+    const value = Number(payload?.scarcity ?? Math.min(40, Number(payload ?? 0)));
+    const shown = Math.max(1, Math.min(40, value));
     if (number) number.textContent = shown;
     badge.classList.toggle('is-closing', shown <= 10);
   }).catch(() => {});
@@ -194,7 +195,8 @@ if (form && app) {
     }
     const formData = new FormData(form);
     try {
-      if (await app.availableSlots() <= 0) {
+      const availability = await app.availableSlots();
+      if (Number(availability?.availableSlots ?? 0) <= 0) {
         window.alert('As vagas já foram preenchidas.');
         return;
       }

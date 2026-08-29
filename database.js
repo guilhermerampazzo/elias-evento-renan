@@ -188,6 +188,11 @@ async function countLeads() {
   return result.rows[0].count;
 }
 
+async function countLeadsToday() {
+  const result = await pool.query('SELECT COUNT(*)::int AS count FROM leads WHERE created_at::date = CURRENT_DATE');
+  return result.rows[0].count;
+}
+
 async function availableSlots() {
   const result = await pool.query("SELECT value::int AS total FROM app_settings WHERE key = 'total_slots'");
   const total = result.rows[0]?.total ?? TOTAL_SLOTS;
@@ -329,6 +334,7 @@ module.exports = {
   cleanupSessions,
   countAdmins,
   countLeads,
+  countLeadsToday,
   createAdmin,
   createLead,
   createSession,

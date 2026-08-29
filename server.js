@@ -12,6 +12,7 @@ const PORT = Number(process.env.PORT || 3000);
 const HOST = process.env.HOST || '0.0.0.0';
 const NODE_ENV = process.env.NODE_ENV || 'development';
 const SESSION_TTL_MS = Math.max(1, Number(process.env.SESSION_TTL_HOURS || 8)) * 60 * 60 * 1000;
+const SCARCITY_BASE = Math.max(10, Number(process.env.SCARCITY_BASE || 40));
 const MAX_BODY_BYTES = 32 * 1024;
 
 // Meta CAPI (privado - nunca exposto no HTML)
@@ -444,7 +445,8 @@ async function handleApi(request, response, pathname, requestUrl) {
   }
 
   if (pathname === '/api/availability' && request.method === 'GET') {
-    return sendJson(response, 200, { availableSlots: await db.availableSlots() });
+    const scarcity = Math.max(1, SCARCITY_BASE - await db.countLeadsToday());
+    return sendJson(response, 200, { availableSlots: await db.availableSlots(), scarcity });
   }
 
   if (pathname === '/api/stats' && request.method === 'GET') {

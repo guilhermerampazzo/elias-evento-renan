@@ -64,7 +64,7 @@
 
   async function availableSlots() {
     const result = await request('/api/availability');
-    return Number(result.availableSlots ?? TOTAL_SLOTS);
+    return result;
   }
 
   function phoneDigits(phone) {
