@@ -315,14 +315,14 @@ h1,h2,h3,p{margin-top:0}
 /* ---- Landing compacta ---- */
 .hero-compact{min-height:0;padding:60px 0 56px;grid-template-columns:43% 57%}
 .hero-compact .hero-copy{padding-left:clamp(20px,7vw,120px);padding-right:24px;align-self:center}
-.hero-compact .hero-visual{height:clamp(400px,48vw,500px);margin-top:0;align-self:center}
-.hero-trio{position:absolute;inset:0;display:grid;grid-template-columns:repeat(2,1fr);grid-template-rows:54% 46%;gap:14px}
-.hero-trio figure{position:relative;overflow:hidden;border-radius:10px;margin:0;height:100%}
+.hero-compact .hero-visual{height:clamp(480px,56vw,600px);margin-top:0;align-self:center;padding-right:clamp(20px,3vw,56px);padding-top:6px}
+.hero-trio{position:absolute;inset:0;display:grid;grid-template-columns:repeat(2,1fr);grid-template-rows:55% 45%;gap:16px}
+.hero-trio figure{position:relative;overflow:hidden;border-radius:14px;margin:0;height:100%}
 .hero-trio figure:after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 40%,rgba(7,28,39,.82) 100%)}
 .hero-trio .trio-horizontal{grid-column:1/-1;border:1px solid rgba(198,161,92,.7);box-shadow:0 0 0 5px rgba(198,161,92,.1)}
 .hero-trio .trio-square{border:1px solid rgba(198,161,92,.4);opacity:.96}
 .hero-trio .trio-square:hover{opacity:1}
-.hero-trio img{width:100%;height:100%;object-fit:contain;object-position:center;display:block;background:#0c2032;padding:0}
+.hero-trio img{width:100%;height:100%;object-fit:cover;object-position:center;display:block}
 .hero-trio figcaption{position:absolute;left:0;right:0;bottom:13px;z-index:2;text-align:center;padding:0 10px}
 .hero-trio figcaption span{display:block;font:800 8px Manrope;letter-spacing:2.2px;text-transform:uppercase;color:var(--gold-pale)}
 .hero-trio figcaption strong{display:block;margin-top:3px;font:700 13px Manrope;color:#fff}
