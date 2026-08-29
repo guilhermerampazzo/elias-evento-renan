@@ -188,6 +188,22 @@ async function countLeads() {
   return result.rows[0].count;
 }
 
+async function recentLeadSignups(limit = 8) {
+  const result = await pool.query(
+    `SELECT name, company, created_at
+     FROM leads
+     WHERE created_at > NOW() - INTERVAL '7 days'
+     ORDER BY created_at DESC
+     LIMIT $1`,
+    [limit]
+  );
+  return result.rows.map((row) => ({
+    firstName: String(row.name || '').trim().split(/\s+/)[0],
+    company: row.company,
+    createdAt: row.created_at
+  }));
+}
+
 async function countLeadsToday() {
   const result = await pool.query('SELECT COUNT(*)::int AS count FROM leads WHERE created_at::date = CURRENT_DATE');
   return result.rows[0].count;
@@ -351,6 +367,7 @@ module.exports = {
   listAdmins,
   listLeads,
   pool,
+  recentLeadSignups,
   updateLead,
   updateLeadEmailStatus,
   verifyPassword

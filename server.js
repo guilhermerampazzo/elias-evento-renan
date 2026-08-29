@@ -446,7 +446,15 @@ async function handleApi(request, response, pathname, requestUrl) {
 
   if (pathname === '/api/availability' && request.method === 'GET') {
     const scarcity = Math.max(1, SCARCITY_BASE - await db.countLeadsToday());
-    return sendJson(response, 200, { availableSlots: await db.availableSlots(), scarcity });
+    return sendJson(response, 200, {
+      availableSlots: await db.availableSlots(),
+      scarcity,
+      recentSignups: await db.recentLeadSignups(6)
+    });
+  }
+
+  if (pathname === '/api/signups/live' && request.method === 'GET') {
+    return sendJson(response, 200, { recentSignups: await db.recentLeadSignups(6) });
   }
 
   if (pathname === '/api/stats' && request.method === 'GET') {

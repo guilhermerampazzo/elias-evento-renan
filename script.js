@@ -48,6 +48,12 @@ function digitsOnly(value) {
   return String(value || '').replace(/\D/g, '');
 }
 
+function escapeHtml(value) {
+  return String(value ?? '').replace(/[&<>'"]/g, (character) => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#039;', '"': '&quot;'
+  }[character]));
+}
+
 function formatPhoneInput(value) {
   const digits = digitsOnly(value).slice(0, 11);
   if (digits.length <= 2) return digits;
@@ -173,7 +179,51 @@ function setupScarcity() {
     const shown = Math.max(1, Math.min(40, value));
     if (number) number.textContent = shown;
     badge.classList.toggle('is-closing', shown <= 10);
+    setupSocialProof(payload?.recentSignups || []);
   }).catch(() => {});
+}
+
+function setupSocialProof(signups) {
+  if (!signups.length) return;
+  const today = new Date().toISOString().slice(0, 10);
+  const recent = signups.filter((item) => {
+    const date = new Date(item.createdAt).toISOString().slice(0, 10);
+    return date === today;
+  });
+  const poolList = recent.length ? recent : signups;
+  let index = 0;
+  let seen = new Set();
+  const region = document.createElement('div');
+  region.className = 'proof-region';
+  region.setAttribute('aria-live', 'polite');
+  document.body.appendChild(region);
+
+  const showItem = (item) => {
+    const key = `${item.firstName}|${item.createdAt}`;
+    if (seen.has(key)) return;
+    seen.add(key);
+    const region = document.querySelector('.proof-region');
+    if (!region) return;
+    const toast = document.createElement('article');
+    toast.className = 'proof-toast';
+    toast.innerHTML = `<span class="proof-avatar" aria-hidden="true">${escapeHtml(String(item.firstName || '').slice(0, 1).toUpperCase())}</span><div><strong>${escapeHtml(item.firstName || 'Alguém')} acabou de se inscrever</strong><span class="proof-caption">Presença confirmada · ${escapeHtml(item.company || 'evento')}</span></div>`;
+    region.appendChild(toast);
+    window.requestAnimationFrame(() => toast.classList.add('is-visible'));
+    window.setTimeout(() => {
+      toast.remove();
+      scheduleNext();
+    }, 5200);
+  };
+
+  const scheduleNext = () => {
+    window.setTimeout(() => {
+      const item = poolList[index % poolList.length];
+      index += 1;
+      showItem(item);
+    }, 18000 + Math.floor(Math.random() * 22000));
+  };
+
+  scheduleNext();
 }
 
 updateLandingCopy();
