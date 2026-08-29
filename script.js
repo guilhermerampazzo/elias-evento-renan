@@ -164,10 +164,22 @@ function setupPixelEvents() {
   }
 }
 
+function setupScarcity() {
+  const badge = document.querySelector('[data-scarcity]');
+  if (!badge || !app) return;
+  const number = badge.querySelector('[data-remaining]');
+  app.availableSlots().then((slots) => {
+    const shown = Math.min(40, Math.max(0, slots));
+    if (number) number.textContent = shown;
+    badge.classList.toggle('is-closing', shown <= 10);
+  }).catch(() => {});
+}
+
 updateLandingCopy();
 setupLeadForm();
 setupCountdown();
 setupSectionCtas();
+setupScarcity();
 setupPixelEvents();
 
 if (form && app) {
