@@ -37,7 +37,7 @@ h1,h2,h3,p{margin-top:0}
 .hero-meta{font:700 13px 'Manrope';letter-spacing:1.4px;text-transform:uppercase;color:#d6d8d0;margin:0 0 34px}
 .hero-meta span{color:var(--gold);margin:0 6px}
 .button{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:15px 21px;border:0;font:700 11px 'DM Sans';letter-spacing:1px;text-transform:uppercase;text-decoration:none;cursor:pointer;transition:transform 160ms var(--ease-out),background 160ms ease,color 160ms ease}
-.hero-copy>.button{min-width:228px;min-height:58px;padding:19px 30px;font-size:12px;letter-spacing:1.2px}
+.hero-copy>.button{min-width:264px;min-height:66px;padding:21px 34px;font-size:13.5px;letter-spacing:1.4px}
 .section-cta{display:flex;flex-direction:column;align-items:flex-start;gap:10px;margin-top:38px}
 .section-cta .button{min-width:220px;min-height:56px;padding:18px 28px;font-size:12px;letter-spacing:1.15px}
 .section-cta .button-navy{width:auto}
