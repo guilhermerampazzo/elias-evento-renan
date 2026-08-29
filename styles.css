@@ -345,7 +345,7 @@ h1,h2,h3,p{margin-top:0}
 @media(max-width:900px){.hero-compact{grid-template-columns:1fr}.hero-compact .hero-copy{padding:0 20px}.hero-compact .hero-visual{min-height:420px;order:-1}.hero-trio{grid-template-rows:1fr 1fr}.hero-trio figcaption p{display:none}.hero-trio figcaption{bottom:20px}}
 
 /* ---- Selo de escassez ---- */
-.scarcity-badge{display:inline-flex;align-items:center;gap:9px;margin-left:16px;padding:11px 18px;border:1px solid rgba(198,161,92,.7);border-radius:999px;background:rgba(198,161,92,.1);color:#f0dfb7;font:700 12px Manrope;letter-spacing:1.4px;text-transform:uppercase;vertical-align:middle}
+.scarcity-badge{display:inline-flex;align-items:center;gap:9px;margin:26px 0 0;padding:11px 18px;border:1px solid rgba(198,161,92,.7);border-radius:999px;background:rgba(198,161,92,.1);color:#f0dfb7;font:700 12px Manrope;letter-spacing:1.4px;text-transform:uppercase}
 .scarcity-badge i{width:8px;height:8px;border-radius:50%;background:#e35d5d;animation:scarcity-blink 1.2s ease-in-out infinite;flex:none}
 .scarcity-badge strong{color:#fff;font-size:15px;letter-spacing:.4px}
 @keyframes scarcity-blink{0%,100%{opacity:1}50%{opacity:.25}}
