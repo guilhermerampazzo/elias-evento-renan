@@ -323,15 +323,15 @@ function leadInput(body) {
   const phoneDigits = digitsOnly(body.phone);
   const cnpjDigits = digitsOnly(body.cnpj);
   const data = {
-    name: String(body.name || '').trim(),
+    name: String(body.name || body.company || '').trim(),
     email: String(body.email || '').trim().toLowerCase(),
     company: String(body.company || '').trim(),
     phone: formatPhone(phoneDigits),
     cnpj: formatCnpj(cnpjDigits),
     consent: Boolean(body.consent)
   };
-  if (!data.name || !data.email || !data.company || phoneDigits.length < 10 || phoneDigits.length > 11 || !isValidCnpj(cnpjDigits) || !data.consent) {
-    const error = new Error('Preencha os campos obrigatórios com dados válidos e aceite receber informações sobre o evento.');
+  if (!data.company || !data.email || phoneDigits.length < 10 || phoneDigits.length > 11) {
+    const error = new Error('Preencha os campos obrigatórios: nome da empresa, e-mail e WhatsApp com dados válidos.');
     error.code = 'INVALID_LEAD';
     throw error;
   }

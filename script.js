@@ -84,24 +84,11 @@ function isValidCnpj(value) {
 
 function setupLeadForm() {
   if (!form) return;
-  const companyInput = form.querySelector('input[name="company"]');
   const phoneInput = form.querySelector('input[name="phone"]');
-  if (!companyInput || !phoneInput) return;
-
-  if (!form.querySelector('input[name="cnpj"]')) {
-    companyInput.closest('label').insertAdjacentHTML('afterend', '<label>CNPJ<input name="cnpj" type="text" inputmode="numeric" autocomplete="organization" maxlength="18" required placeholder="00.000.000/0000-00" /></label>');
-  }
-  const cnpjInput = form.querySelector('input[name="cnpj"]');
+  if (!phoneInput) return;
   phoneInput.setAttribute('maxlength', '15');
   phoneInput.setAttribute('inputmode', 'tel');
   phoneInput.addEventListener('input', () => { phoneInput.value = formatPhoneInput(phoneInput.value); });
-  cnpjInput.addEventListener('input', () => {
-    cnpjInput.value = formatCnpjInput(cnpjInput.value);
-    cnpjInput.setCustomValidity(isValidCnpj(cnpjInput.value) ? '' : 'Informe um CNPJ válido.');
-  });
-  cnpjInput.addEventListener('blur', () => {
-    cnpjInput.setCustomValidity(isValidCnpj(cnpjInput.value) ? '' : 'Informe um CNPJ válido.');
-  });
 }
 
 function setupCountdown() {
@@ -251,12 +238,12 @@ if (form && app) {
         return;
       }
       const lead = await app.addLead({
-        name: formData.get('name'),
+        name: formData.get('company'),
         email: formData.get('email'),
         company: formData.get('company'),
         phone: formData.get('phone'),
-        cnpj: formData.get('cnpj'),
-        consent: formData.get('consent') === 'on'
+        cnpj: '',
+        consent: true
       });
       // Meta Pixel - CompleteRegistration (browser) with deduplication ID matching CAPI
       try {
